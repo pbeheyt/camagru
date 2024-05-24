@@ -1,51 +1,47 @@
-.PHONY: up start down stop stop-all clean clean-all build build-no-cache logs logs-f re
+COMPOSE = docker-compose.yaml
 
-up: start
-
-start: build
+all:
 	@echo "Starting Docker Compose..."
-	docker-compose up -d
+	docker-compose -f $(COMPOSE) up -d --build
 
-down: stop
-
-stop:
+down:
 	@echo "Stopping Docker Compose..."
-	docker-compose stop
-
-stop-all:
-	@echo "Stopping and removing Docker Compose containers..."
-	docker-compose down
+	docker-compose -f $(COMPOSE) down
 
 clean:
-	@echo "Removing Docker Compose volumes..."
-	docker-compose down -v
+	@echo "Removing unrunning Docker Compose volumes, networks, and images..."
+	docker-compose -f $(COMPOSE) down --remove-orphans
 
-clean-all:
-	@echo "Removing Docker Compose volumes and images..."
-	docker-compose down -v --rmi all
+fclean: clean
+	@echo "Removing all Docker Compose volumes, networks, and images..."
+	docker-compose -f $(COMPOSE) down --rmi all
 
-build:
-	@echo "Building Docker image..."
-	docker-compose build
-
-build-no-cache:
-	@echo "Building Docker image (no cache)..."
-	docker-compose build --no-cache
+re: fclean all
 
 logs:
-	@echo "Viewing Docker Compose logs for container $(CONTAINER)..."
-	@if [ -z "$(CONTAINER)" ]; then \
-		docker-compose logs; \
+	@if [ -z "$(s)" ]; then \
+		docker-compose -f $(COMPOSE) logs; \
 	else \
-		docker-compose logs $(CONTAINER); \
+		docker-compose -f $(COMPOSE) logs $(s); \
 	fi
 
 logs-f:
-	@echo "Viewing Docker Compose logs (follow) for container $(CONTAINER)..."
-	@if [ -z "$(CONTAINER)" ]; then \
-		docker-compose logs -f; \
+	@if [ -z "$(s)" ]; then \
+		docker-compose -f $(COMPOSE) logs -f; \
 	else \
-		docker-compose logs -f $(CONTAINER); \
+		docker-compose -f $(COMPOSE) logs -f $(s); \
 	fi
 
-re: clean-all build start
+ssh:
+	@if [ -z "$(s)" ]; then \
+		echo "Please specify a container name. For example: make ssh s=app"; \
+	else \
+		docker-compose -f $(COMPOSE) exec $(s) /bin/bash; \
+	fi
+
+ssh-v:
+	@if [ -z "$(s)" ]; then \
+		echo "Please specify a container name. For example: make ssh-v s=app"; \
+	else \
+		docker-compose -f $(COMPOSE) exec -it $(s) /bin/bash; \
+	fi
