@@ -18,6 +18,8 @@ fclean: clean
 
 re: fclean all
 
+restart: down all
+
 logs:
 	@if [ -z "$(s)" ]; then \
 		docker-compose -f $(COMPOSE) logs; \
