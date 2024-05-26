@@ -3,6 +3,7 @@
 const escapeHtml = require('../utils/escapeHtml');
 const isValidEmail = require('../utils/isValidEmail');
 const user = require('../models/user');
+const bcrypt = require('bcrypt');
 
 exports.renderLoginPage = (req, res) => {
     res.render('login', { error: null });
@@ -58,10 +59,12 @@ exports.handleRegister = async (req, res) => {
     console.log('Password:', sanitizedPassword);
 
     try {
+        // Hash the password before storing it
+        const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
         const newUser = await user.create({
             email: sanitizedEmail,
             username: sanitizedUsername,
-            password: sanitizedPassword
+            password: hashedPassword
         });
 
         console.log('New user created:', newUser);
