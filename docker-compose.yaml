@@ -30,5 +30,16 @@ services:
     depends_on:
       - db
 
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '8080:80'
+    depends_on:
+      - app
+    volumes:
+      - ./public:/usr/share/nginx/html
+
 volumes:
   postgres_data:
