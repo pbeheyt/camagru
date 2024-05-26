@@ -16,9 +16,9 @@ fclean: clean
 	@echo "Removing all Docker Compose volumes, networks, and images..."
 	docker-compose -f $(COMPOSE) down --rmi all
 
-re: fclean all
+re: down all
 
-restart: down all
+re-c: fclean all
 
 logs:
 	@if [ -z "$(s)" ]; then \

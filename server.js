@@ -14,6 +14,10 @@ app.set('views', path.join(__dirname, 'views'));
 // Set up static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Parse URL-encoded bodies for form data
+app.use(express.urlencoded({ extended: true }));
+
+
 // Mount the routes on a specific route
 app.use('/', router);
 
