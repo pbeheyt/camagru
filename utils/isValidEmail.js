@@ -1,6 +1,11 @@
+/**
+ * Function to validate email address based on RFC 5322 standard.
+ * @param {string} email The email address to validate.
+ * @returns {boolean} True if the email address is valid, otherwise false.
+ */
 function isValidEmail(email) {
-    // Basic validation: check if email contains '@' and '.'
-    return email.includes('@') && email.includes('.');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
 
 module.exports = isValidEmail;

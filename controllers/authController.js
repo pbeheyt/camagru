@@ -2,6 +2,7 @@
 
 const escapeHtml = require('../utils/escapeHtml');
 const isValidEmail = require('../utils/isValidEmail');
+const isValidPassword = require('../utils/isValidPassword');
 const user = require('../models/user');
 const bcrypt = require('bcrypt');
 
@@ -46,8 +47,9 @@ exports.handleRegister = async (req, res) => {
     if (!isValidEmail(email)) {
         return res.status(400).render('register', { error: 'Invalid email format.' });
     }
-    if (password.length < 6) {
-        return res.status(400).render('register', { error: 'Password must be at least 6 characters long.' });
+
+    if (!isValidPassword(password)) {
+        return res.status(400).render('register', { error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.' });
     }
 
     const sanitizedEmail = escapeHtml(email);
