@@ -4,11 +4,15 @@ const escapeHtml = require('../utils/escapeHtml');
 const isValidEmail = require('../utils/isValidEmail');
 const user = require('../models/user');
 
-exports.login = (req, res) => {
+exports.renderLoginPage = (req, res) => {
+    res.render('login', { error: null });
+};
+
+exports.handleLogin = (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.status(400).send('Username and password are required.');
+        return res.status(400).render('login', { error: 'Username and password are required.' });
     }
 
     const sanitizedUsername = escapeHtml(username);
@@ -17,21 +21,32 @@ exports.login = (req, res) => {
     console.log('Username:', sanitizedUsername);
     console.log('Password:', sanitizedPassword);
 
+    // Placeholder for authentication logic (e.g., checking username and password against the database)
+    const isValidUser = true; // Replace with actual validation
+
+    if (!isValidUser) {
+        return res.status(401).render('login', { error: 'Invalid username or password.' });
+    }
+
     res.redirect('/home');
 };
 
-exports.register = async (req, res) => {
+exports.renderRegisterPage = (req, res) => {
+    res.render('register', { error: null });
+};
+
+exports.handleRegister = async (req, res) => {
     const { email, username, password } = req.body;
 
     if (!email || !username || !password) {
-        return res.status(400).send('Email, username, and password are required.');
+        return res.status(400).render('register', { error: 'Email, username, and password are required.' });
     }
 
     if (!isValidEmail(email)) {
-        return res.status(400).send('Invalid email format.');
+        return res.status(400).render('register', { error: 'Invalid email format.' });
     }
     if (password.length < 6) {
-        return res.status(400).send('Password must be at least 6 characters long.');
+        return res.status(400).render('register', { error: 'Password must be at least 6 characters long.' });
     }
 
     const sanitizedEmail = escapeHtml(email);

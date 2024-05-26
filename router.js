@@ -1,27 +1,20 @@
+// router.js
+
 const express = require('express');
 const router = express.Router();
-const { login, register } = require('./controllers/authController');
+const authController = require('./controllers/authController');
 
-// Route for the home page
+// Home
 router.get(['/', '/home'], (req, res) => {
     res.render('home');
 });
 
+// Login
+router.get('/login', authController.renderLoginPage);
+router.post('/login', authController.handleLogin);
 
-// Route for the login page
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
-// Route for handling login form submission
-router.post('/login', login);
-
-// Route for the register page
-router.get('/register', (req, res) => {
-    res.render('register');
-});
-
-// Route for handling registration form submission
-router.post('/register', register);
+// Register
+router.get('/register', authController.renderRegisterPage);
+router.post('/register', authController.handleRegister);
 
 module.exports = router;
