@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database');
-const User = require('./user');
-const Image = require('./image');
+const User = require('./User');
+const Image = require('./Image');
 
 class Like extends Sequelize.Model {}
 

@@ -1,7 +1,7 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-class User extends Sequelize.Model {}
+class User extends Model {}
 
 User.init({
   id: {
@@ -17,12 +17,15 @@ User.init({
       isEmail: true
     }
   },
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      min: 8,
-      max: 100
+      len: [8, 100]
     }
   }
 }, {

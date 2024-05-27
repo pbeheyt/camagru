@@ -1,8 +1,8 @@
 const sequelize = require('./database');
-const User = require('./models/user');
-const Image = require('./models/image');
-const Comment = require('./models/comment');
-const Like = require('./models/like');
+const User = require('./models/User');
+const Image = require('./models/Image');
+const Comment = require('./models/Comment');
+const Like = require('./models/Like');
 
 sequelize.sync({ force: true })
   .then(() => {

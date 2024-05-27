@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const port = 3000;
 const sequelize = require('./database');
 const router = require('./router');
 
@@ -17,12 +16,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Parse URL-encoded bodies for form data
 app.use(express.urlencoded({ extended: true }));
 
-
 // Mount the routes on a specific route
 app.use('/', router);
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Initialize the database connection
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Database connection has been established successfully.');
+    // Start the server only after the database connection is established
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Unable to connect to the database:', err);
+  });

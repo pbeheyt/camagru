@@ -21,10 +21,10 @@ function isValidPassword(password) {
         return false;
     }
     // Password must contain at least one special character
-    if (!/[!@#$%^&*()_+{}\[\]:;<>,.?/~\-]/.test(password)) {
+    if (!/[!@#$%^&*()_+{}\[\]:;<>,.?/~~\-]/.test(password)) {
         return false;
     }
     return true;
 }
 
-module.exports = isValidPassword;
+exports.isValidPassword = isValidPassword;

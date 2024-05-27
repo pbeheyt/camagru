@@ -1,16 +1,15 @@
 // authController.js
 
-const escapeHtml = require('../utils/escapeHtml');
-const isValidEmail = require('../utils/isValidEmail');
-const isValidPassword = require('../utils/isValidPassword');
-const user = require('../models/user');
+const { escapeHtml, isValidEmail, isValidPassword, authenticateUser } = require('../utils')
+
+const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 exports.renderLoginPage = (req, res) => {
     res.render('login', { error: null });
 };
 
-exports.handleLogin = (req, res) => {
+exports.handleLogin = async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -23,14 +22,16 @@ exports.handleLogin = (req, res) => {
     console.log('Username:', sanitizedUsername);
     console.log('Password:', sanitizedPassword);
 
-    // Placeholder for authentication logic (e.g., checking username and password against the database)
-    const isValidUser = true; // Replace with actual validation
-
-    if (!isValidUser) {
-        return res.status(401).render('login', { error: 'Invalid username or password.' });
+    try {
+        const User = await authenticateUser(sanitizedUsername, sanitizedPassword);
+        if (!User) {
+            return res.status(401).render('login', { error: 'Invalid username or password.' });
+        }
+        res.redirect('/home');
+    } catch (error) {
+        console.error('Error authenticating user:', error);
+        res.status(500).send('Internal Server Error');
     }
-
-    res.redirect('/home');
 };
 
 exports.renderRegisterPage = (req, res) => {
@@ -61,9 +62,8 @@ exports.handleRegister = async (req, res) => {
     console.log('Password:', sanitizedPassword);
 
     try {
-        // Hash the password before storing it
         const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
-        const newUser = await user.create({
+        const newUser = await User.create({
             email: sanitizedEmail,
             username: sanitizedUsername,
             password: hashedPassword

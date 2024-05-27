@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database');
-const User = require('./user');
+const User = require('./User');
 
 class Image extends Sequelize.Model {}
 

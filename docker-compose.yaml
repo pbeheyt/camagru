@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  camagru-network:
+    name: camagru-network
+
 services:
   app:
     build: .
@@ -7,9 +11,11 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=${NODE_ENV}
-      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
     depends_on:
       - db
+    networks:
+      - camagru-network
 
   db:
     image: postgres:14
@@ -19,6 +25,8 @@ services:
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - camagru-network
 
   pgadmin:
     image: dpage/pgadmin4
@@ -29,17 +37,17 @@ services:
       - '5050:80'
     depends_on:
       - db
+    networks:
+      - camagru-network
 
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+    image: nginx:latest
     ports:
       - '8080:80'
     depends_on:
       - app
-    volumes:
-      - ./public:/usr/share/nginx/html
+    networks:
+      - camagru-network
 
 volumes:
   postgres_data:
