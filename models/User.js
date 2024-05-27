@@ -27,6 +27,15 @@ User.init({
     validate: {
       len: [8, 100]
     }
+  },
+  confirmationToken: {
+    type: DataTypes.UUID,
+    allowNull: true
+  },
+  isConfirmed: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 }, {
   sequelize,
