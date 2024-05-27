@@ -1,6 +1,6 @@
 // authController.js
 
-const { escapeHtml, isValidEmail, isValidPassword, authenticateUser } = require('../utils')
+const { escapeHtml, isValidEmail, isValidPassword, authenticateUser } = require('../utils');
 
 const User = require('../models/User');
 const bcrypt = require('bcrypt');

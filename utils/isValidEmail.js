@@ -8,4 +8,4 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-exports.isValidEmail = isValidEmail;
+module.exports = isValidEmail;

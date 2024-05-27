@@ -2,4 +2,4 @@ function escapeHtml(unsafe) {
     return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-exports.escapeHtml = escapeHtml;
+module.exports = escapeHtml;

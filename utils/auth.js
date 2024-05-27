@@ -10,4 +10,4 @@ async function authenticateUser(username, password) {
   return isPasswordValid ? user : false;
 }
 
-exports.authenticateUser = authenticateUser;
+module.exports = authenticateUser;
