@@ -15,9 +15,9 @@
     <h1>Welcome back to Camagru!</h1>
 
     <!-- Display error message if it exists -->
-    <% if (error) { %>
-      <p style="color: red;"><%= error %></p>
-    <% } %>
+	<% if (typeof error !== 'undefined' && error !== null) { %>
+		<p style="color: red;"><%= error %></p>
+	<% } %>
 
     <form action="/login" method="post">
       <div class="form-group">
@@ -34,6 +34,10 @@
       Don't have an account?
       <a href="/register">Create Account</a>
     </p>
+    <p>
+		Forgot your password?
+		<a href="/forgot-password">Reset Password</a>
+	  </p>
   </div>
 
   <!-- Include footer -->

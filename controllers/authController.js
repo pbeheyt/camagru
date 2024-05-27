@@ -7,7 +7,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 
 exports.renderLoginPage = (req, res) => {
-    res.render('login', { error: null });
+    res.render('login');
 };
 
 exports.handleLogin = async (req, res) => {
@@ -39,7 +39,7 @@ exports.handleLogin = async (req, res) => {
 };
 
 exports.renderRegisterPage = (req, res) => {
-    res.render('register', { error: null });
+    res.render('register');
 };
 
 exports.handleRegister = async (req, res) => {
@@ -84,7 +84,7 @@ exports.handleRegister = async (req, res) => {
 	  console.log('New user created:', newUser);
   
 	  // Send confirmation email
-	  await sendConfirmationEmail(newUser);
+	  await sendConfirmationEmail(newUser, req);
   
 	  res.redirect('/login');
 	} catch (error) {

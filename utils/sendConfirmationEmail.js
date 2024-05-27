@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 
-async function sendConfirmationEmail(user) {
+async function sendConfirmationEmail(user, req) {
 	const transporter = nodemailer.createTransport({
 	  service: 'hotmail',
 	  auth: {
@@ -13,7 +13,7 @@ async function sendConfirmationEmail(user) {
 	  from: process.env.EMAIL,
 	  to: user.email,
 	  subject: 'Account Confirmation',
-	  text: `Please confirm your account by clicking the following link: http://localhost:3000/confirm/${user.confirmationToken}`
+	  text: `Please confirm your account by clicking the following link: http://${req.headers.host}/confirm/${user.confirmationToken}`
 	};
   
 	await transporter.sendMail(mailOptions);

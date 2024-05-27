@@ -5,6 +5,7 @@ const isValidPassword = require('./isValidPassword');
 const generateToken = require('./generateToken');
 const getTokenExpiration = require('./getTokenExpiration');
 const sendConfirmationEmail = require('./sendConfirmationEmail');
+const sendPasswordResetEmail = require('./sendPasswordResetEmail');
 
 module.exports = {
   authenticateUser,
@@ -14,4 +15,5 @@ module.exports = {
   isValidEmail,
   isValidPassword,
   sendConfirmationEmail,
+  sendPasswordResetEmail,
 };
