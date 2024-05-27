@@ -29,7 +29,7 @@ User.init({
     }
   },
   confirmationToken: {
-    type: DataTypes.UUID,
+    type: DataTypes.STRING,
     allowNull: true
   },
   isConfirmed: {
