@@ -26,6 +26,7 @@ router.post('/forgot-password', passwordController.requestPasswordReset);
 
 // Password reset
 router.get('/reset-password/:token', passwordController.handleResetTokenCheck);
+router.post('/reset-password', passwordController.resetPassword);
 
 // Account confirmation
 router.get('/confirm/:token', confirmController.handleConfirmation);

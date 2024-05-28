@@ -73,7 +73,6 @@ exports.handleRegister = async (req, res) => {
   
 	  const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
 	  const confirmationToken = generateToken();
-
 	  
 	  const newUser = await User.create({
 		  email: sanitizedEmail,
