@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const sequelize = require('./database');
+const sequelize = require('./database/init');
 const router = require('./router');
 
 // Set the view engine to EJS

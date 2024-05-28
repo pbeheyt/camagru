@@ -3,7 +3,7 @@ const transporter = require('./mailer');
 async function sendPasswordResetEmail(user, req) {
   // Define email options
   const mailOptions = {
-    from: process.env.EMAIL,
+    // from: process.env.GMAIL_USERNAME,
     to: user.email,
     subject: 'Password Reset Request',
     text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.
