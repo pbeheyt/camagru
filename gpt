@@ -1,3 +1,91 @@
+const bcrypt = require('bcrypt');
+const User = require('../models/User');
+
+async function authenticateUser(username, password) {
+  const user = await User.findOne({ where: { username } });
+  if (!user) {
+    return false;
+  }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  return isPasswordValid ? user : false;
+}
+
+module.exports = authenticateUser;
+function escapeHtml(unsafe) {
+    return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+module.exports = escapeHtml;
+const crypto = require('crypto');
+
+function generateToken() {
+	return crypto.randomBytes(20).toString('hex');
+}
+
+module.exports = generateToken;function getTokenExpiration() {
+	return Date.now() + 3600000; // 1 hour from now
+}
+
+module.exports = getTokenExpiration;const authenticateUser = require('./authenticateUser');
+const escapeHtml = require('./escapeHtml');
+const isValidEmail = require('./isValidEmail');
+const isValidPassword = require('./isValidPassword');
+const generateToken = require('./generateToken');
+const getTokenExpiration = require('./getTokenExpiration');
+const sendConfirmationEmail = require('./sendConfirmationEmail');
+const sendPasswordResetEmail = require('./sendPasswordResetEmail');
+
+module.exports = {
+  authenticateUser,
+  escapeHtml,
+  generateToken,
+  getTokenExpiration,
+  isValidEmail,
+  isValidPassword,
+  sendConfirmationEmail,
+  sendPasswordResetEmail,
+};
+/**
+ * Function to validate email address based on RFC 5322 standard.
+ * @param {string} email The email address to validate.
+ * @returns {boolean} True if the email address is valid, otherwise false.
+ */
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+module.exports = isValidEmail;
+/**
+ * Function to validate password based on certain criteria.
+ * @param {string} password The password to validate.
+ * @returns {boolean} True if the password meets the criteria, otherwise false.
+ */
+function isValidPassword(password) {
+    // Password must be at least 8 characters long
+    if (password.length < 8) {
+        return false;
+    }
+    // Password must contain at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+        return false;
+    }
+    // Password must contain at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+        return false;
+    }
+    // Password must contain at least one digit
+    if (!/\d/.test(password)) {
+        return false;
+    }
+    // Password must contain at least one special character
+    if (!/[!@#$%^&*()_+{}\[\]:;<>,.?/~~\-]/.test(password)) {
+        return false;
+    }
+    return true;
+}
+
+module.exports = isValidPassword;
 const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
@@ -9,6 +97,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_PASS,
   }
 });
+
+module.exports = transporter;
+const transporter = require('./mailer');
 
 async function sendConfirmationEmail(user, req) {
   // Define email options
@@ -44,6 +135,9 @@ async function sendConfirmationEmail(user, req) {
   await transporter.sendMail(mailOptions);
 }
 
+module.exports = sendConfirmationEmail;
+const transporter = require('./mailer');
+
 async function sendPasswordResetEmail(user, req) {
   // Define email options
   const mailOptions = {
@@ -78,7 +172,4 @@ async function sendPasswordResetEmail(user, req) {
   await transporter.sendMail(mailOptions);
 }
 
-module.exports = {
-  sendConfirmationEmail,
-  sendPasswordResetEmail,
-};
+module.exports = sendPasswordResetEmail;

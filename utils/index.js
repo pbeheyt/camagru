@@ -1,19 +1,16 @@
-const authenticateUser = require('./authenticateUser');
-const escapeHtml = require('./escapeHtml');
-const isValidEmail = require('./isValidEmail');
-const isValidPassword = require('./isValidPassword');
-const generateToken = require('./generateToken');
-const getTokenExpiration = require('./getTokenExpiration');
-const sendConfirmationEmail = require('./sendConfirmationEmail');
-const sendPasswordResetEmail = require('./sendPasswordResetEmail');
+const authenticateUser = require('./auth');
+const { isValidEmail, isValidPassword } = require('./validation');
+const { generateToken, getTokenExpiration } = require('./token');
+const { sendConfirmationEmail, sendPasswordResetEmail } = require('./mailer');
+const escapeHtml = require('./security');
 
 module.exports = {
   authenticateUser,
-  escapeHtml,
-  generateToken,
-  getTokenExpiration,
   isValidEmail,
   isValidPassword,
+  generateToken,
+  getTokenExpiration,
   sendConfirmationEmail,
   sendPasswordResetEmail,
+  escapeHtml,
 };

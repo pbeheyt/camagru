@@ -10,19 +10,16 @@ exports.handleConfirmation = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
-    // Check if token is expired
     const tokenExpiration = user.getDataValue('tokenExpiration');
     if (Date.now() > tokenExpiration) {
       return res.status(400).send('Token has expired');
     }
 
-    // Mark user as confirmed and remove confirmation token
     user.isConfirmed = true;
     user.confirmationToken = null;
     user.tokenExpiration = null;
     await user.save();
 
-	// Render confirmation view with success message
 	res.status(200).render('login', { success: 'Your account has been successfully verified. Please log in.' });
 
   } catch (error) {

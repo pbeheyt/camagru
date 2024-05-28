@@ -1,7 +1,5 @@
-// authController.js
-
 const { escapeHtml, isValidEmail, isValidPassword, authenticateUser } = require('../utils');
-const { generateToken , getTokenExpiration, sendConfirmationEmail } = require('../utils');
+const { generateToken , sendConfirmationEmail } = require('../utils');
 
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
@@ -43,18 +41,22 @@ exports.renderRegisterPage = (req, res) => {
 };
 
 exports.handleRegister = async (req, res) => {
-	const { email, username, password } = req.body;
-  
-	if (!email || !username || !password) {
-	  return res.status(400).render('register', { error: 'Email, username, and password are required.' });
+	const { email, username, password, 'confirm-password': confirmPassword } = req.body;
+	
+	if (!email || !username || !password || !confirmPassword) {
+		return res.status(400).render('register', { error: 'Email, username, and password are required.' });
 	}
-  
+	
 	if (!isValidEmail(email)) {
-	  return res.status(400).render('register', { error: 'Invalid email format.' });
+		return res.status(400).render('register', { error: 'Invalid email format.' });
 	}
-  
+	
 	if (!isValidPassword(password)) {
-	  return res.status(400).render('register', { error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.' });
+		return res.status(400).render('register', { error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.' });
+	}
+
+	if (password !== confirmPassword) {
+		return res.status(400).render('register', { error: 'Passwords do not match' });
 	}
   
 	const sanitizedEmail = escapeHtml(email);
@@ -82,7 +84,6 @@ exports.handleRegister = async (req, res) => {
 		  isConfirmed: false,
 		});
 
-	  // Send confirmation email
 	  await sendConfirmationEmail(newUser, req);
 
 	  console.log('New user created:', newUser);
