@@ -88,8 +88,10 @@ exports.handleRegister = async (req, res) => {
 
 	  console.log('New user created:', newUser);
   
-  
-	  res.redirect('/login');
+	  res.status(200).render('login', {
+		success: 'Your account has been successfully registered! Please check your email to confirm your account and complete the registration process.'
+	  });
+	  
 	} catch (error) {
 	  console.error('Error creating user:', error);
 	  res.status(500).send('Internal Server Error');
