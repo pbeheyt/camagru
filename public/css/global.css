@@ -6,12 +6,6 @@ body {
     background-color: #fafafa;
 }
 
-header {
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .logo {
     display: flex;
     align-items: center;
@@ -71,21 +65,53 @@ button:hover {
     background-color: #333;
 }
 
+header {
+	background-color: #fff;
+	color: #000;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+}
+
 footer {
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
+	background-color: #fff;
+	padding: 20px;
+	box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+nav ul {
+	list-style: none;
+	display: flex;
+	align-items: center;
+}
+
+nav ul li {
+	margin: 0 10px;
+}
+
+nav ul li a {
+	color: #000;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+nav ul li a:hover {
+	text-decoration: underline;
+}
+
+.logo img {
+	height: 40px;
 }
 
 /* Page-specific Styles */
 .login-container,
 .register-container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: 0 auto; /* Center horizontally */
+	background-color: #fff;
+	padding: 40px;
+	border-radius: 4px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	max-width: 400px;
+	margin: 0 auto; /* Center horizontally */
 }
-
