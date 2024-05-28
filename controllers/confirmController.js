@@ -22,7 +22,9 @@ exports.handleConfirmation = async (req, res) => {
     user.tokenExpiration = null;
     await user.save();
 
-    res.redirect('/login');
+	// Render confirmation view with success message
+	res.status(200).render('login', { success: 'Your account has been successfully verified. Please log in.' });
+
   } catch (error) {
     console.error('Error confirming user:', error);
     res.status(500).send('Internal Server Error');
