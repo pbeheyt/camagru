@@ -1,14 +1,7 @@
-const nodemailer = require('nodemailer')
+const transporter = require('./mailer');
 
 async function sendPasswordResetEmail(user, req) {
-  const transporter = nodemailer.createTransport({
-    service: 'hotmail',
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  });
-
+  // Define email options
   const mailOptions = {
     from: process.env.EMAIL,
     to: user.email,
@@ -20,6 +13,7 @@ async function sendPasswordResetEmail(user, req) {
     `
   };
 
+  // Send the email
   await transporter.sendMail(mailOptions);
 }
 

@@ -73,18 +73,21 @@ exports.handleRegister = async (req, res) => {
   
 	  const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
 	  const confirmationToken = generateToken();
+
+	  
 	  const newUser = await User.create({
-		email: sanitizedEmail,
-		username: sanitizedUsername,
-		password: hashedPassword,
-		confirmationToken,
-		isConfirmed: false,
-	  });
-  
-	  console.log('New user created:', newUser);
-  
+		  email: sanitizedEmail,
+		  username: sanitizedUsername,
+		  password: hashedPassword,
+		  confirmationToken,
+		  isConfirmed: false,
+		});
+
 	  // Send confirmation email
 	  await sendConfirmationEmail(newUser, req);
+
+	  console.log('New user created:', newUser);
+  
   
 	  res.redirect('/login');
 	} catch (error) {

@@ -36,6 +36,14 @@ User.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
+  },
+  passwordResetToken: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  passwordResetExpires: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   sequelize,
