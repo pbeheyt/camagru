@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../../models/User');
 
 exports.handleConfirmation = async (req, res) => {
   const { token } = req.params;

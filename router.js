@@ -1,11 +1,10 @@
-// router.js
-
 const express = require('express');
 const router = express.Router();
-const authController = require('./controllers/authController');
-const confirmController = require('./controllers/confirmController');
-const passwordController = require('./controllers/passwordController')
-
+const loginController = require('./controllers/auth/login');
+const registerController = require('./controllers/auth/register');
+const accountVerifController = require('./controllers/auth/account-verif');
+const passwordForgetController = require('./controllers/auth/password-forget');
+const passwordResetController = require('./controllers/auth/password-reset');
 
 // Home
 router.get(['/', '/home'], (req, res) => {
@@ -13,22 +12,22 @@ router.get(['/', '/home'], (req, res) => {
 });
 
 // Login
-router.get('/login', authController.renderLoginPage);
-router.post('/login', authController.handleLogin);
+router.get('/login', loginController.renderLoginPage);
+router.post('/login', loginController.handleLogin);
 
 // Register
-router.get('/register', authController.renderRegisterPage);
-router.post('/register', authController.handleRegister);
-
-// Forgot password
-router.get('/forgot-password', passwordController.renderForgotPasswordPage);
-router.post('/forgot-password', passwordController.requestPasswordReset);
-
-// Password reset
-router.get('/reset-password/:token', passwordController.handleResetTokenCheck);
-router.post('/reset-password', passwordController.resetPassword);
+router.get('/register', registerController.renderRegisterPage);
+router.post('/register', registerController.handleRegister);
 
 // Account confirmation
-router.get('/confirm/:token', confirmController.handleConfirmation);
+router.get('/confirm/:token', accountVerifController.handleConfirmation);
+
+// Forgot password
+router.get('/password-forget', passwordForgetController.renderForgotPasswordPage);
+router.post('/password-forget', passwordForgetController.requestPasswordReset);
+
+// Password reset
+router.get('/password-reset/:token', passwordResetController.handleResetTokenCheck);
+router.post('/password-reset', passwordResetController.resetPassword);
 
 module.exports = router;
