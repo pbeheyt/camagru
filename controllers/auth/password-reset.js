@@ -32,7 +32,7 @@ exports.resetPassword = async (req, res) => {
 	}
 
 	if (password !== confirmPassword) {
-	return res.status(400).render('password-reset', { token, error: 'Passwords do not match' });
+		return res.status(400).render('password-reset', { token, error: 'Passwords do not match' });
 	}
   
 	try {
