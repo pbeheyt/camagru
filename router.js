@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const loginController = require('./controllers/auth/login');
 const registerController = require('./controllers/auth/register');
 const accountVerifController = require('./controllers/auth/account-verif');
@@ -8,7 +9,7 @@ const passwordResetController = require('./controllers/auth/password-reset');
 
 // Home
 router.get(['/', '/home'], (req, res) => {
-    res.render('home');
+    res.sendFile(path.join(__dirname, 'views', 'home.html'));
 });
 
 // Login

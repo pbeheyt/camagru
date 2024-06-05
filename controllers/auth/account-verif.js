@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const path = require('path');
 
 exports.handleConfirmation = async (req, res) => {
   const { token } = req.params;
@@ -7,12 +8,12 @@ exports.handleConfirmation = async (req, res) => {
     const user = await User.findOne({ where: { confirmationToken: token } });
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.redirect('/login?error=' + encodeURIComponent('User not found'));
     }
 
     const tokenExpiration = user.getDataValue('tokenExpiration');
     if (Date.now() > tokenExpiration) {
-      return res.status(400).send('Token has expired');
+      return res.redirect('/login?error=' + encodeURIComponent('Token has expired'));
     }
 
     user.isConfirmed = true;
@@ -20,10 +21,9 @@ exports.handleConfirmation = async (req, res) => {
     user.tokenExpiration = null;
     await user.save();
 
-	res.status(200).render('login', { success: 'Your account has been successfully verified. Please log in.' });
-
+    return res.redirect('/login?success=' + encodeURIComponent('Your account has been successfully verified. Please log in.'));
   } catch (error) {
     console.error('Error confirming user:', error);
-    res.status(500).send('Internal Server Error');
+    return res.status(500).redirect('/login?error=' + encodeURIComponent('Internal Server Error'));
   }
 };

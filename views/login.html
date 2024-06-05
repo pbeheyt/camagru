@@ -4,27 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Camagru</title>
-  <!-- Link to your CSS file -->
   <link rel="stylesheet" href="/css/global.css">
 </head>
 <body>
-  <!-- Include header -->
-  <%- include('header') %>
+  <div id="header"></div>
 
   <div class="login-container">
     <h1>Welcome back to Camagru!</h1>
+    <p id="error-message" style="color: red;"></p>
+    <p id="success-message" style="color: green;"></p>
 
-    <!-- Display error message if it exists -->
-	<% if (typeof error !== 'undefined' && error !== null) { %>
-		<p style="color: red;"><%= error %></p>
-	<% } %>
-
-    <!-- Display success message if it exists -->
-    <% if (typeof success !== 'undefined' && success !== null) { %>
-		<p style="color: green;"><%= success %></p>
-	  <% } %>
-
-    <form action="/login" method="post">
+    <form id="login-form" action="/login" method="post">
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" required>
@@ -40,12 +30,14 @@
       <a href="/register">Create Account</a>
     </p>
     <p>
-		Forgot your password?
-		<a href="/password-forget">Reset Password</a>
-	  </p>
+      Forgot your password?
+      <a href="/password-forget">Reset Password</a>
+    </p>
   </div>
 
-  <!-- Include footer -->
-  <%- include('footer') %>
+  <div id="footer"></div>
+
+  <script src="/js/include.js"></script>
+  <script src="/js/login.js"></script>
 </body>
 </html>
