@@ -3,7 +3,8 @@ COMPOSE = docker-compose.yaml
 all:
 	@echo "Starting Docker Compose..."
 	docker-compose -f $(COMPOSE) up -d --build
-
+	docker-compose -f $(COMPOSE) logs -f app
+	
 down:
 	@echo "Stopping Docker Compose..."
 	docker-compose -f $(COMPOSE) down

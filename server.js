@@ -4,17 +4,14 @@ const path = require('path');
 const sequelize = require('./database/init');
 const router = require('./router');
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
-
-// Set the directory for views
-app.set('views', path.join(__dirname, 'views'));
-
 // Set up static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse URL-encoded bodies for form data
 app.use(express.urlencoded({ extended: true }));
+
+// Middleware to parse JSON
+app.use(express.json());
 
 // Mount the routes on a specific route
 app.use('/', router);

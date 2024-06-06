@@ -16,6 +16,9 @@ services:
       - db
     networks:
       - camagru-network
+    # Comment for production environement
+    # volumes:
+    #   - .:/app
 
   db:
     image: postgres:14

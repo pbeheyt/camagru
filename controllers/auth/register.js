@@ -11,19 +11,19 @@ exports.handleRegister = async (req, res) => {
     const { email, username, password, 'confirm-password': confirmPassword } = req.body;
 
     if (!email || !username || !password || !confirmPassword) {
-        return res.redirect('/register?error=' + encodeURIComponent('Email, username, and password are required.'));
+        return res.status(400).json({ error: 'Email, username, and password are required.' });
     }
 
     if (!isValidEmail(email)) {
-        return res.redirect('/register?error=' + encodeURIComponent('Invalid email format.'));
+        return res.status(400).json({ error: 'Invalid email format.' });
     }
 
     if (!isValidPassword(password)) {
-        return res.redirect('/register?error=' + encodeURIComponent('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.'));
+        return res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.' });
     }
 
     if (password !== confirmPassword) {
-        return res.redirect('/register?error=' + encodeURIComponent('Passwords do not match.'));
+        return res.status(400).json({ error: 'Passwords do not match.' });
     }
 
     const sanitizedEmail = escapeHtml(email);
@@ -37,7 +37,7 @@ exports.handleRegister = async (req, res) => {
     try {
         const existingUser = await User.findOne({ where: { email: sanitizedEmail } });
         if (existingUser) {
-            return res.redirect('/register?error=' + encodeURIComponent('Email address is already in use.'));
+            return res.status(409).json({ error: 'Email address is already in use.' });
         }
 
         const hashedPassword = await bcrypt.hash(sanitizedPassword, 10);
@@ -55,9 +55,10 @@ exports.handleRegister = async (req, res) => {
 
         console.log('New user created:', newUser);
 
-        return res.redirect('/login?success=' + encodeURIComponent('Your account has been successfully registered! Please check your email to confirm your account and complete the registration process.'));
+        return res.status(201).json({ success: 'Your account has been successfully registered! Please check your email to confirm your account and complete the registration process.' });
     } catch (error) {
         console.error('Error creating user:', error);
-        return res.status(500).redirect('/register?error=' + encodeURIComponent('Internal Server Error'));
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
