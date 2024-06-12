@@ -1,36 +1,49 @@
 document.addEventListener('DOMContentLoaded', function() {
-	const params = new URLSearchParams(window.location.search);
-	const error = params.get('error');
-	const success = params.get('success');
-  
-	if (error) {
-	  document.getElementById('error-message').textContent = decodeURIComponent(error);
-	}
-  
-	if (success) {
-	  document.getElementById('success-message').textContent = decodeURIComponent(success);
-	}
-  
-	const form = document.getElementById('password-forget-form');
-	form.addEventListener('submit', function(event) {
-	  event.preventDefault();
-  
-	  const formData = new FormData(this);
+    const form = document.getElementById('password-forget-form');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('success-message');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const formData = new URLSearchParams(new FormData(this));
+
+      console.log('Form data:', formData.toString()); // Log form data
+
 	  fetch('/password-forget', {
 		method: 'POST',
 		body: formData,
+		headers: {
+		  'Content-Type': 'application/x-www-form-urlencoded'
+		}
 	  })
-		.then(response => response.json().then(data => ({ status: response.status, body: data })))
-		.then(({ status, body }) => {
-		  if (status === 200) {
-			window.location.href = '/password-forget?success=' + encodeURIComponent('Password reset request sent!');
-		  } else {
-			document.getElementById('error-message').textContent = body.error;
-		  }
-		})
-		.catch(error => {
-		  console.error('Error:', error);
-		});
-	});
+	  .then(response => response.json())
+	  .then(data => {
+		if (data.success) {
+		  successMessage.textContent = data.success;
+		  errorMessage.textContent = '';
+		  setTimeout(() => {
+			window.location.href = '/login';
+		  }, 2000);
+		} else {
+		  errorMessage.textContent = data.error;
+		  successMessage.textContent = '';
+		}
+	  })
+	  .catch(error => {
+		console.error('Error:', error);
+	  });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    const success = params.get('success');
+
+    if (error) {
+      errorMessage.textContent = error;
+    }
+
+    if (success) {
+      successMessage.textContent = success;
+    }
   });
-  
