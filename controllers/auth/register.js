@@ -1,11 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../../models/User');
 const { escapeHtml, isValidEmail, isValidPassword, generateToken, sendConfirmationEmail } = require('../../utils');
-const path = require('path');
-
-exports.renderRegisterPage = (req, res) => {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'register.html'));
-};
 
 exports.handleRegister = async (req, res) => {
     const { email, username, password, 'confirm-password': confirmPassword } = req.body;

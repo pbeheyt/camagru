@@ -6,6 +6,7 @@ const registerController = require('./controllers/auth/register');
 const accountVerifController = require('./controllers/auth/account-verif');
 const passwordForgetController = require('./controllers/auth/password-forget');
 const passwordResetController = require('./controllers/auth/password-reset');
+const { validateResetToken } = require('./middlewares/auth');
 
 // Home
 router.get(['/', '/home'], (req, res) => {
@@ -13,22 +14,30 @@ router.get(['/', '/home'], (req, res) => {
 });
 
 // Login
-router.get('/login', loginController.renderLoginPage);
+router.get('/login', (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'login.html'));
+});
 router.post('/login', loginController.handleLogin);
 
 // Register
-router.get('/register', registerController.renderRegisterPage);
+router.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'register.html'));
+});
 router.post('/register', registerController.handleRegister);
 
 // Account confirmation
 router.get('/confirm/:token', accountVerifController.handleConfirmation);
 
 // Forgot password
-router.get('/password-forget', passwordForgetController.renderForgotPasswordPage);
+router.get('/password-forget', (req, res) => {
+	res.sendFile(path.join(__dirname,'views', 'password-forget.html'));
+});
 router.post('/password-forget', passwordForgetController.requestPasswordReset);
 
 // Password reset
-router.get('/password-reset/:token', passwordResetController.handleResetTokenCheck);
-router.post('/password-reset', passwordResetController.resetPassword);
+router.get('/password-reset/:token', validateResetToken, (req, res) => {
+	res.sendFile(path.join(__dirname,'views', 'password-reset.html'));
+});
+router.post('/password-reset/:token', passwordResetController.resetPassword);
 
 module.exports = router;

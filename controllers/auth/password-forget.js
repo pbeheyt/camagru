@@ -1,14 +1,9 @@
 const User = require('../../models/User');
 const { generateToken, getTokenExpiration, sendPasswordResetEmail } = require('../../utils');
-const path = require('path');
 
-exports.renderForgotPasswordPage = (req, res) => {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'password-forget.html'));
-};
+
 exports.requestPasswordReset = async (req, res) => {
     const { email } = req.body;
-
-    console.log('email :', email);
 
     try {
         const user = await User.findOne({ where: { email } });
@@ -32,5 +27,3 @@ exports.requestPasswordReset = async (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
-

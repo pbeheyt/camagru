@@ -1,9 +1,4 @@
 const { escapeHtml, authenticateUser } = require('../../utils');
-const path = require('path');
-
-exports.renderLoginPage = (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html'));
-};
 
 exports.handleLogin = async (req, res) => {
 	const { username, password } = req.body;
