@@ -9,18 +9,18 @@ const { validateAccount, validateResetToken } = require('./middlewares/auth');
 
 // Home
 router.get(['/', '/home'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'home.html'));
+    res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
 });
 
 // Login
 router.get('/login', (req, res) => {
-	res.sendFile(path.join(__dirname, 'views', 'login.html'));
+	res.sendFile(path.join(__dirname, 'views', 'auth', 'login.html'));
 });
 router.post('/login', loginController.handleLogin);
 
 // Register
 router.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'register.html'));
+    res.sendFile(path.join(__dirname, 'views', 'auth', 'register.html'));
 });
 router.post('/register', registerController.handleRegister);
 
@@ -31,16 +31,16 @@ router.get('/confirm/:token', validateAccount, (req, res) => {
 
 // Forgot password
 router.get('/password-forget', (req, res) => {
-	res.sendFile(path.join(__dirname,'views', 'password-forget.html'));
+	res.sendFile(path.join(__dirname, 'views', 'auth', 'password-forget.html'));
 });
 router.post('/password-forget', passwordForgetController.requestPasswordReset);
 
 // Password reset
 router.get('/password-reset', (req, res) => {
-	res.sendFile(path.join(__dirname, 'views', 'password-reset.html'));
+	res.sendFile(path.join(__dirname, 'views', 'auth', 'password-reset.html'));
 });
 router.get('/password-reset/:token', validateResetToken, (req, res) => {
-	res.sendFile(path.join(__dirname,'views', 'password-reset.html'));
+	res.sendFile(path.join(__dirname, 'views', 'auth', 'password-reset.html'));
 });
 router.post('/password-reset/:token', passwordResetController.resetPassword);
 
