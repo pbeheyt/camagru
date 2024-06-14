@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (data.success) {
 		  successMessage.textContent = data.success;
 		  errorMessage.textContent = '';
+		  setTimeout(() => {
+			window.location.href = '/login';
+		  }, 3000);
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';

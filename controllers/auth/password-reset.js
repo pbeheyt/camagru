@@ -28,7 +28,7 @@ exports.resetPassword = async (req, res) => {
     user.passwordResetTokenExpiration = null;
     await user.save();
 
-    res.json({ success: 'Your password has been successfully reset. Please log in with your new password.' });
+    res.json({ success: 'Your password has been successfully reset.' });
   } catch (error) {
     console.error('Error resetting password:', error);
     res.status(500).json({ error: 'Internal Server Error' });

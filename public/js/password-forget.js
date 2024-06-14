@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		  errorMessage.textContent = '';
 		  setTimeout(() => {
 			window.location.href = '/login';
-		  }, 2000);
+		  }, 3000);
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';

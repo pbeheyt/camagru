@@ -3,10 +3,9 @@ const router = express.Router();
 const path = require('path');
 const loginController = require('./controllers/auth/login');
 const registerController = require('./controllers/auth/register');
-const accountVerifController = require('./controllers/auth/account-verif');
 const passwordForgetController = require('./controllers/auth/password-forget');
 const passwordResetController = require('./controllers/auth/password-reset');
-const { validateResetToken } = require('./middlewares/auth');
+const { validateAccount, validateResetToken } = require('./middlewares/auth');
 
 // Home
 router.get(['/', '/home'], (req, res) => {
@@ -26,7 +25,9 @@ router.get('/register', (req, res) => {
 router.post('/register', registerController.handleRegister);
 
 // Account confirmation
-router.get('/confirm/:token', accountVerifController.handleConfirmation);
+router.get('/confirm/:token', validateAccount, (req, res) => {
+	res.redirect('/login?success=' + encodeURIComponent('Your account has been successfully verified. Please log in.'));
+});
 
 // Forgot password
 router.get('/password-forget', (req, res) => {
