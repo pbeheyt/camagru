@@ -47,4 +47,11 @@ exports.validateResetToken = async (req, res, next) => {
     res.status(500).redirect('/login?error=' + encodeURIComponent('Internal Server Error'));
   }
 };
-  
+
+exports.authenticateUser = (req, res, next) => {
+	if (req.session.userId) {
+	  next();
+	} else {
+	  res.status(401).json({ error: 'Unauthorized' });
+	}
+};

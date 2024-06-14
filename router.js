@@ -5,12 +5,19 @@ const loginController = require('./controllers/auth/login');
 const registerController = require('./controllers/auth/register');
 const passwordForgetController = require('./controllers/auth/password-forget');
 const passwordResetController = require('./controllers/auth/password-reset');
-const { validateAccount, validateResetToken } = require('./middlewares/auth');
+const { validateAccount, validateResetToken, authenticateUser } = require('./middlewares/auth');
+// const { updateUser } = require('./controllers/auth/profile');
 
-// Home
-router.get(['/', '/home'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
+// Home route (protected)
+router.get('/home', authenticateUser, (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
 });
+
+// Profile route (protected)
+router.get('/profile', authenticateUser, (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'main', 'profile.html'));
+});
+// router.post('/profile', authenticateUser, updateUser);
 
 // Login
 router.get('/login', (req, res) => {

@@ -1,0 +1,38 @@
+document.addEventListener('DOMContentLoaded', function() {
+	const form = document.getElementById('profile-form');
+	const errorMessage = document.getElementById('error-message');
+	const successMessage = document.getElementById('success-message');
+  
+	form.addEventListener('submit', function(event) {
+	  event.preventDefault();
+  
+	  const formData = new URLSearchParams(new FormData(this));
+  
+	  fetch('/profile', {
+		method: 'POST',
+		body: formData,
+		headers: {
+		  'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	  })
+	  .then(response => {
+		return response.json();
+	  })
+	  .then(data => {
+		if (data.success) {
+		  successMessage.textContent = data.success;
+		  errorMessage.textContent = '';
+		  setTimeout(() => {
+			window.location.href = '/home';
+		  }, 3000);
+		} else {
+		  errorMessage.textContent = data.error;
+		  successMessage.textContent = '';
+		}
+	  })
+	  .catch(error => {
+		console.error('Error:', error);
+	  });
+	});
+  });
+  

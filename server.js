@@ -1,8 +1,10 @@
 const express = require('express');
-const app = express();
 const path = require('path');
 const sequelize = require('./database/init');
 const router = require('./router');
+const { sessionMiddleware } = require('./middlewares/session');
+
+const app = express();
 
 // Set up static file serving
 app.use(express.static(path.join(__dirname, 'public')));
@@ -12,6 +14,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON
 app.use(express.json());
+
+// Use session middleware
+app.use(sessionMiddleware);
+
+// Middleware to make session data available to views
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+})
 
 // Mount the routes on a specific route
 app.use('/', router);

@@ -21,6 +21,10 @@ exports.handleLogin = async (req, res) => {
 	  if (!user.isConfirmed) {
 		return res.status(401).json({ error: 'Account not confirmed. Please check your email.' });
 	  }
+
+	  // Set user ID in session
+	  req.session.userId = user.id;
+
 	  res.status(200).json({ success: 'Login successful.' });
 	} catch (error) {
 	  console.error('Error authenticating user:', error);
