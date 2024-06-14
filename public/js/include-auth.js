@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
   
-	loadContent('/html/header-no-navbar.html', 'header');
+	loadContent('/html/header-auth.html', 'header');
 	loadContent('/html/footer.html', 'footer');
   });
   

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
   
-	loadContent('/html/header.html', 'header');
+	loadContent('/html/header-main.html', 'header');
 	loadContent('/html/footer.html', 'footer');
   });
   
