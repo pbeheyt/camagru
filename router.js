@@ -36,6 +36,9 @@ router.get('/password-forget', (req, res) => {
 router.post('/password-forget', passwordForgetController.requestPasswordReset);
 
 // Password reset
+router.get('/password-reset', (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'password-reset.html'));
+});
 router.get('/password-reset/:token', validateResetToken, (req, res) => {
 	res.sendFile(path.join(__dirname,'views', 'password-reset.html'));
 });

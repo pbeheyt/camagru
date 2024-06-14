@@ -33,18 +33,18 @@ exports.validateResetToken = async (req, res, next) => {
     const user = await User.findOne({ where: { passwordResetToken: token } });
 
     if (!user) {
-      return res.redirect('/password-reset?error=' + encodeURIComponent('Invalid token'));
+      return res.redirect('/login?error=' + encodeURIComponent('Invalid token'));
     }
 
     const tokenExpiration = user.getDataValue('passwordResetTokenExpiration');
     if (Date.now() > tokenExpiration) {
-      return res.redirect('/password-reset?error=' + encodeURIComponent('Token has expired'));
+      return res.redirect('/login?error=' + encodeURIComponent('Token has expired'));
     }
 
     next();
   } catch (error) {
     console.error('Error validating reset token:', error);
-    res.status(500).redirect('/password-reset?error=' + encodeURIComponent('Internal Server Error'));
+    res.status(500).redirect('/login?error=' + encodeURIComponent('Internal Server Error'));
   }
 };
   
