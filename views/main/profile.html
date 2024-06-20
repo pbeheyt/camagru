@@ -5,16 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile - Camagru</title>
   <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/profile.css">
 </head>
 <body>
   <div id="header"></div>
 
   <div class="profile-container">
     <h1>Update your Profile</h1>
-    <p id="error-message" style="color: red;"></p>
-    <p id="success-message" style="color: green;"></p>
+    <p id="error-message" class="message-error"></p>
+    <p id="success-message" class="message-success"></p>
 
-    <form id="profile-form" action="/profile" method="post">
+    <form id="profile-form" class="profile-form" action="/profile" method="post">
       <div class="form-group">
         <label for="email">Email address</label>
         <input type="email" id="email" name="email" required>
@@ -31,7 +34,7 @@
         <label for="confirm-password">Confirm New Password</label>
         <input type="password" id="confirm-password" name="confirm-password">
       </div>
-      <button type="submit">Update Profile</button>
+      <button type="submit" class="btn-submit">Update Profile</button>
     </form>
   </div>
 
