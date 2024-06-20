@@ -51,4 +51,9 @@ router.get('/password-reset/:token', validateResetToken, (req, res) => {
 });
 router.post('/password-reset/:token', passwordResetController.resetPassword);
 
+// Catch-all route for 404 errors
+router.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', 'main', '404.html'));
+});
+
 module.exports = router;
