@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const logoutController = require('./controllers/auth/logout');
 const loginController = require('./controllers/auth/login');
 const registerController = require('./controllers/auth/register');
 const passwordForgetController = require('./controllers/auth/password-forget');
@@ -24,6 +25,9 @@ router.get('/login', (req, res) => {
 	res.sendFile(path.join(__dirname, 'views', 'auth', 'login.html'));
 });
 router.post('/login', loginController.handleLogin);
+
+// Logout route
+router.get('/logout', logoutController.handleLogout);
 
 // Register
 router.get('/register', (req, res) => {
