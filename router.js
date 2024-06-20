@@ -10,10 +10,13 @@ const { validateAccount, validateResetToken, authenticateUser } = require('./mid
 const { updateUserInfo, updateUserPassword, getUserInfo } = require('./controllers/main/profile');
 const { getImages, likeImage, commentImage, uploadImage } = require('./controllers/main/gallery');
 
-// Home route (protected)
-router.get(['/home', '/'], authenticateUser, (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
-});
+// Home route
+router.get(['/home', '/'], (req, res) => {
+	const filePath = res.locals.isAuthenticated
+	  ? path.join(__dirname, 'views', 'main', 'home.html')
+	  : path.join(__dirname, 'views', 'main', 'home-public.html');
+	res.sendFile(filePath);
+  });
 
 // Profile route (protected)
 router.get('/profile', authenticateUser, (req, res) => {
@@ -74,7 +77,7 @@ router.get('/upload', authenticateUser, (req, res) => {
 });
   
 // Image upload route
-router.post('/upload', uploadImage);
+router.post('/upload', authenticateUser, uploadImage);
 
 
 // Catch-all route for 404 errors

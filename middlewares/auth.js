@@ -56,3 +56,9 @@ exports.authenticateUser = (req, res, next) => {
         res.status(401).sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
     }
 };
+
+exports.isAuthenticated = (req, res, next) => {
+	res.locals.isAuthenticated = req.session && req.session.userId ? true : false;
+	next();
+  };
+  

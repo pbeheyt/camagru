@@ -3,6 +3,8 @@ const path = require('path');
 const sequelize = require('./database/init');
 const router = require('./router');
 const { sessionMiddleware } = require('./middlewares/session');
+const { isAuthenticated } = require('./middlewares/auth');
+const sessionToLocals = require('./middlewares/sessionToLocals');
 const { Image, Like, Comment, User } = require('./models');
 
 const app = express();
@@ -22,11 +24,11 @@ app.use(express.json());
 // Use session middleware
 app.use(sessionMiddleware);
 
-// Middleware to make session data available to views
-app.use((req, res, next) => {
-  res.locals.session = req.session;
-  next();
-})
+// Middleware to check authentication and make session data available to views
+app.use(isAuthenticated);
+
+// Use the session to locals middleware
+app.use(sessionToLocals);
 
 // Mount the routes on a specific route
 app.use('/', router);
