@@ -7,7 +7,7 @@ const registerController = require('./controllers/auth/register');
 const passwordForgetController = require('./controllers/auth/password-forget');
 const passwordResetController = require('./controllers/auth/password-reset');
 const { validateAccount, validateResetToken, authenticateUser } = require('./middlewares/auth');
-// const { updateUser } = require('./controllers/auth/profile');
+const { updateUserInfo, updateUserPassword, getUserInfo } = require('./controllers/main/profile');
 
 // Home route (protected)
 router.get(['/home', '/'], authenticateUser, (req, res) => {
@@ -16,9 +16,11 @@ router.get(['/home', '/'], authenticateUser, (req, res) => {
 
 // Profile route (protected)
 router.get('/profile', authenticateUser, (req, res) => {
-	res.sendFile(path.join(__dirname, 'views', 'main', 'profile.html'));
+    res.sendFile(path.join(__dirname, 'views', 'main', 'profile.html'));
 });
-// router.post('/profile', authenticateUser, updateUser);
+router.post('/change-info', authenticateUser, updateUserInfo);
+router.post('/change-password', authenticateUser, updateUserPassword);
+router.get('/profile-info', authenticateUser, getUserInfo);
 
 // Login
 router.get('/login', (req, res) => {
