@@ -9,9 +9,22 @@ Image.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
   likes: {
     type: DataTypes.INTEGER,
     defaultValue: 0
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
   sequelize,

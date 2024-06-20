@@ -6,9 +6,22 @@ const Image = require('./Image');
 class Comment extends Sequelize.Model {}
 
 Comment.init({
-  text: {
-    type: DataTypes.STRING,
+  userId: {
+    type: DataTypes.INTEGER,
     allowNull: false
+  },
+  imageId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  text: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+    createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW
   }
 }, {
   sequelize,

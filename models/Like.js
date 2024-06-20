@@ -5,7 +5,16 @@ const Image = require('./Image');
 
 class Like extends Sequelize.Model {}
 
-Like.init({}, {
+Like.init({
+  userId: {
+	type: DataTypes.INTEGER,
+	allowNull: false
+  },
+	imageId: {
+	type: DataTypes.INTEGER,
+	allowNull: false
+  }
+}, {
   sequelize,
   modelName: 'Like',
   tableName: 'likes'
