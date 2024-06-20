@@ -9,8 +9,8 @@ const { validateAccount, validateResetToken, authenticateUser } = require('./mid
 // const { updateUser } = require('./controllers/auth/profile');
 
 // Home route (protected)
-router.get('/home', authenticateUser, (req, res) => {
-	res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
+router.get(['/home', '/'], authenticateUser, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'main', 'home.html'));
 });
 
 // Profile route (protected)

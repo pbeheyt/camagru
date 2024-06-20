@@ -7,18 +7,18 @@ networks:
 services:
   app:
     build: .
+    command: npm run dev  # Use nodemon for development
     ports:
       - '3000:3000'
     environment:
-      - NODE_ENV=${NODE_ENV}
+      - NODE_ENV=development
       - DATABASE_URL=postgres://${DB_USERNAME}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}
     depends_on:
       - db
     networks:
       - camagru-network
-    # Comment for production environement
-    # volumes:
-    #   - .:/app
+    volumes:
+      - .:/app  # Mount the current directory into the container
 
   db:
     image: postgres:14

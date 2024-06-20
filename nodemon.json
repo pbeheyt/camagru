@@ -1,0 +1,23 @@
+{
+	"watch": [
+		"config",
+		"controllers",
+		"database",
+		"middlewares",
+		"migrations",
+		"models",
+		"nginx",
+		"public",
+		"seeders",
+		"utils",
+		"views",
+		"server.js",
+		"router.js",
+		".env",
+		"docker-compose.yaml",
+		"Dockerfile",
+		"Makefile"
+	],
+	"ext": "js,json,html,css,env,yaml,yml,dockerfile,md",
+	"ignore": ["node_modules"]
+}
