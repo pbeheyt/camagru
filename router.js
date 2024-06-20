@@ -8,7 +8,7 @@ const passwordForgetController = require('./controllers/auth/password-forget');
 const passwordResetController = require('./controllers/auth/password-reset');
 const { validateAccount, validateResetToken, authenticateUser } = require('./middlewares/auth');
 const { updateUserInfo, updateUserPassword, getUserInfo } = require('./controllers/main/profile');
-const { getImages, likeImage, commentImage } = require('./controllers/main/gallery');
+const { getImages, likeImage, commentImage, uploadImage } = require('./controllers/main/gallery');
 
 // Home route (protected)
 router.get(['/home', '/'], authenticateUser, (req, res) => {
@@ -67,6 +67,15 @@ router.post('/images/:id/like', authenticateUser, likeImage);
 
 // Comment on an image
 router.post('/images/:id/comment', authenticateUser, commentImage);
+
+// Image upload page
+router.get('/upload', authenticateUser, (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'main', 'upload.html'));
+});
+  
+// Image upload route
+router.post('/upload', uploadImage);
+
 
 // Catch-all route for 404 errors
 router.use((req, res) => {

@@ -10,6 +10,9 @@ const app = express();
 // Set up static file serving
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Parse URL-encoded bodies for form data
 app.use(express.urlencoded({ extended: true }));
 

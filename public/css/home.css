@@ -1,0 +1,35 @@
+.home-container {
+	padding: 20px;
+	text-align: center;
+  }
+  
+  #image-feed {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .image-container {
+	width: 80%;
+	max-width: 600px;
+	margin-bottom: 20px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 10px;
+	background-color: #fff;
+  }
+  
+  .image-container img {
+	max-width: 100%;
+	border-radius: 8px;
+  }
+  
+  .comments-container {
+	margin-top: 10px;
+	text-align: left;
+  }
+  
+  .comments-container p {
+	margin: 5px 0;
+  }
+  
