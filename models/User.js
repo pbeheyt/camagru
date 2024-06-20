@@ -1,7 +1,13 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../database/init');
 
-class User extends Model {}
+class User extends Model {
+	static associate(models) {
+	  this.hasMany(models.Image, { foreignKey: 'userId' });
+	  this.hasMany(models.Comment, { foreignKey: 'userId' });
+	  this.hasMany(models.Like, { foreignKey: 'userId' });
+	}
+}
 
 User.init({
   id: {

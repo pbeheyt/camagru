@@ -3,6 +3,7 @@ const path = require('path');
 const sequelize = require('./database/init');
 const router = require('./router');
 const { sessionMiddleware } = require('./middlewares/session');
+const { Image, Like, Comment, User } = require('./models');
 
 const app = express();
 
@@ -34,6 +35,11 @@ sequelize
   .authenticate()
   .then(() => {
     console.log('Database connection has been established successfully.');
+	// Initialize model associations
+	User.associate({ Image, Comment, Like });
+	Image.associate({ User, Comment, Like });
+	Comment.associate({ User, Image });
+	Like.associate({ User, Image });
     return sequelize.sync({ force: forceSync });
   })
   .then(() => {

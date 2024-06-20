@@ -3,7 +3,12 @@ const sequelize = require('../database/init');
 const User = require('./User');
 const Image = require('./Image');
 
-class Comment extends Model {}
+class Comment extends Model {
+  static associate(models) {
+    this.belongsTo(models.User, { foreignKey: 'userId' });
+    this.belongsTo(models.Image, { foreignKey: 'imageId' });
+  }
+}
 
 Comment.init({
   userId: {

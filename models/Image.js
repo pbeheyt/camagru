@@ -1,54 +1,41 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../database/init');
+const User = require('./User');
 
-class User extends Model {}
+class Image extends Model {
+  static associate(models) {
+    this.belongsTo(models.User, { foreignKey: 'userId' });
+    this.hasMany(models.Comment, { foreignKey: 'imageId' });
+    this.hasMany(models.Like, { foreignKey: 'imageId' });
+  }
+}
 
-User.init({
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  email: {
+Image.init({
+  url: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
-    }
+    allowNull: false
   },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      len: [8, 100]
-    }
-  },
-  confirmationToken: {
-    type: DataTypes.STRING,
+  description: {
+    type: DataTypes.TEXT,
     allowNull: true
   },
-  isConfirmed: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  passwordResetToken: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  passwordResetExpires: {
+  createdAt: {
     type: DataTypes.DATE,
-    allowNull: true
+    allowNull: false,
+    defaultValue: DataTypes.NOW
+  },
+  likes: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
   sequelize,
-  modelName: 'User',
-  tableName: 'users'
+  modelName: 'Image',
+  tableName: 'images'
 });
 
-module.exports = User;
+module.exports = Image;
