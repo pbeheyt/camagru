@@ -28,11 +28,21 @@ app.use((req, res, next) => {
 app.use('/', router);
 
 // Initialize the database connection
+const forceSync = process.env.FORCE_SYNC === 'true';
+
 sequelize
   .authenticate()
   .then(() => {
     console.log('Database connection has been established successfully.');
-    // Start the server only after the database connection is established
+    return sequelize.sync({ force: forceSync });
+  })
+  .then(() => {
+    if (forceSync === 'true') {
+      console.log('Database & tables created with force sync!');
+    } else {
+      console.log('Database synchronized without force sync.');
+    }
+    // Start the server only after the database is synchronized
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

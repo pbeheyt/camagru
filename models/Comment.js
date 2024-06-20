@@ -1,9 +1,9 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../database/init');
 const User = require('./User');
 const Image = require('./Image');
 
-class Comment extends Sequelize.Model {}
+class Comment extends Model {}
 
 Comment.init({
   userId: {
@@ -18,7 +18,7 @@ Comment.init({
     type: DataTypes.TEXT,
     allowNull: false
   },
-    createdAt: {
+  createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
@@ -29,7 +29,9 @@ Comment.init({
   tableName: 'comments'
 });
 
-Comment.belongsTo(User, { foreignKey: 'user_id' });
-Comment.belongsTo(Image, { foreignKey: 'image_id' });
+Comment.belongsTo(User, { foreignKey: 'userId' });
+Comment.belongsTo(Image, { foreignKey: 'imageId' });
+User.hasMany(Comment, { foreignKey: 'userId' });
+Image.hasMany(Comment, { foreignKey: 'imageId' });
 
 module.exports = Comment;

@@ -10,9 +10,6 @@ exports.handleLogin = async (req, res) => {
 	const sanitizedUsername = escapeHtml(username);
 	const sanitizedPassword = escapeHtml(password);
   
-	console.log('Username:', sanitizedUsername);
-	console.log('Password:', sanitizedPassword);
-  
 	try {
 	  const user = await authenticateUser(sanitizedUsername, sanitizedPassword);
 	  if (!user) {
