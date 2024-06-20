@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const path = require('path');
 
 exports.validateAccount = async (req, res, next) => {
 	const { token } = req.params;
@@ -49,9 +50,9 @@ exports.validateResetToken = async (req, res, next) => {
 };
 
 exports.authenticateUser = (req, res, next) => {
-	if (req.session.userId) {
-	  next();
-	} else {
-	  res.status(401).json({ error: 'Unauthorized' });
-	}
+    if (req.session.userId) {
+        next();
+    } else {
+        res.status(401).sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
+    }
 };
