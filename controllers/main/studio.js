@@ -3,6 +3,7 @@ const fs = require('fs');
 const { Image } = require('../../models');
 const multer = require('multer');
 const { createCanvas, loadImage } = require('canvas');
+const GIFEncoder = require('gifencoder');
 
 // Set up multer for image uploads
 const storage = multer.diskStorage({
@@ -109,16 +110,31 @@ exports.captureImage = async (req, res) => {
 	  // Get the file path
 	  const filePath = path.join(__dirname, '../../uploads', path.basename(image.url));
   
-	  // Delete the image file from the file system
-	  fs.unlink(filePath, async (err) => {
+	  // Check if the file exists before attempting to delete it
+	  fs.access(filePath, fs.constants.F_OK, async (err) => {
 		if (err) {
-		  console.error('Error deleting image file:', err);
-		  return res.status(500).json({ success: false, error: 'Error deleting image file' });
-		}
+		  if (err.code === 'ENOENT') {
+			console.warn('File does not exist:', filePath);
+			// File does not exist, but still delete the record from the database
+			await image.destroy();
+			return res.json({ success: true, message: 'Image record deleted, but file was not found' });
+		  } else {
+			console.error('Error accessing file:', err);
+			return res.status(500).json({ success: false, error: 'Error accessing image file' });
+		  }
+		} else {
+		  // Delete the image file from the file system
+		  fs.unlink(filePath, async (err) => {
+			if (err) {
+			  console.error('Error deleting image file:', err);
+			  return res.status(500).json({ success: false, error: 'Error deleting image file' });
+			}
   
-		// Delete the record from the database
-		await image.destroy();
-		res.json({ success: true });
+			// Delete the record from the database
+			await image.destroy();
+			res.json({ success: true });
+		  });
+		}
 	  });
 	} catch (error) {
 	  console.error('Error deleting image:', error);
@@ -138,3 +154,39 @@ exports.getSuperposableImages = (req, res) => {
     res.json({ success: true, images });
   });
 };
+
+exports.createAnimatedGIF = async (req, res) => {
+	try {
+	  const { imageUrls, delay, superposableImage } = req.body;
+	  const encoder = new GIFEncoder(640, 480);
+	  const filePath = path.join(__dirname, '../../uploads/', `${Date.now()}.gif`);
+	  const writeStream = fs.createWriteStream(filePath);
+  
+	  encoder.createReadStream().pipe(writeStream);
+	  encoder.start();
+	  encoder.setRepeat(0);
+	  encoder.setDelay(delay);
+	  encoder.setQuality(10);
+  
+	  for (const imageUrl of imageUrls) {
+		const img = await loadImage(imageUrl);
+		const canvas = createCanvas(640, 480);
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0, 640, 480);
+		if (superposableImage) {
+		  const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+		  ctx.drawImage(overlayImg, 0, 0, 640, 480);
+		}
+		encoder.addFrame(ctx);
+	  }
+  
+	  encoder.finish();
+  
+	  writeStream.on('finish', () => {
+		res.json({ success: true, imageUrl: `/uploads/${path.basename(filePath)}` });
+	  });
+	} catch (error) {
+	  console.error('Error creating animated GIF:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };

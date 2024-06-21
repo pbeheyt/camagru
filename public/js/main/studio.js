@@ -8,15 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
   const previewModal = document.getElementById('preview-modal');
   const previewImage = document.getElementById('preview-image');
   const postButton = document.getElementById('post-button');
+  const createGifButton = document.getElementById('create-gif-button');
+  const gifNotification = document.getElementById('gif-notification');
   const discardButton = document.getElementById('discard-button');
-  const closeModal = document.getElementById('close-modal');
+  const closePreview = document.getElementById('close-preview');
 
   let selectedSuperposableImage = null;
-  let capturedImageData = null;
-  captureButton.disabled = true;  // Disable capture button initially
-  uploadButton.disabled = true;   // Disable upload button initially
+  let gifInProgress = false;
+  captureButton.disabled = true;
+  uploadButton.disabled = true;
+  createGifButton.disabled = true;
 
-  // Initialize webcam
   async function initWebcam() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -26,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Load superposable images
   function loadSuperposableImages() {
     fetch('/images/superposable')
       .then(response => response.json())
@@ -40,13 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
               selectedSuperposableImage = src;
               captureButton.disabled = false;
               uploadButton.disabled = false;
-              // Remove selected class from all images
+              createGifButton.disabled = false;
               document.querySelectorAll('.superposable-image').forEach(image => {
                 image.classList.remove('selected');
               });
-              // Add selected class to clicked image
               img.classList.add('selected');
-              // Overlay the selected image on the webcam feed
               overlaySuperposableImage(src);
             });
             superposableImagesContainer.appendChild(img);
@@ -60,12 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  // Overlay the selected superposable image on the webcam feed
   function overlaySuperposableImage(src) {
     const overlay = document.createElement('img');
     overlay.src = src;
     overlay.classList.add('webcam-overlay');
-    // Remove any existing overlay
     const existingOverlay = document.querySelector('.webcam-overlay');
     if (existingOverlay) {
       existingOverlay.remove();
@@ -73,13 +70,13 @@ document.addEventListener('DOMContentLoaded', function() {
     webcamElement.parentElement.appendChild(overlay);
   }
 
-  // Load previous thumbnails
   function loadThumbnails(userSpecific = false) {
     const url = userSpecific ? '/images?user=true' : '/images';
     fetch(url)
       .then(response => response.json())
       .then(data => {
         if (data.success) {
+          data.images.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           data.images.forEach(image => {
             const img = document.createElement('img');
             img.src = image.url;
@@ -99,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  // Append new thumbnail to the thumbnails container
   function addThumbnail(image) {
     const img = document.createElement('img');
     img.src = image.url;
@@ -108,10 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteImage(image.id, img);
       }
     });
-    thumbnailsContainer.appendChild(img);
+    thumbnailsContainer.insertBefore(img, thumbnailsContainer.firstChild);
   }
 
-  // Delete image
   function deleteImage(imageId, imgElement) {
     fetch(`/studio/delete/${imageId}`, {
       method: 'DELETE',
@@ -123,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       if (data.success) {
         alert('Image deleted successfully');
-        imgElement.remove();  // Remove the image element from the DOM
+        imgElement.remove();
       } else {
         console.error('Error deleting image:', data.error);
       }
@@ -133,14 +128,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Capture image from webcam
   captureButton.addEventListener('click', () => {
     const canvas = document.createElement('canvas');
     canvas.width = webcamElement.videoWidth;
     canvas.height = webcamElement.videoHeight;
     const context = canvas.getContext('2d');
     context.drawImage(webcamElement, 0, 0, canvas.width, canvas.height);
-    capturedImageData = canvas.toDataURL('image/png');
+    const capturedImageData = canvas.toDataURL('image/png');
 
     fetch('/studio/capture', {
       method: 'POST',
@@ -152,8 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        previewImage.src = data.imageUrl; // Show the final image URL from server
-        previewModal.style.display = 'block';  // Show the preview modal
+        previewImage.src = data.imageUrl;
+        previewModal.style.display = 'block';
       } else {
         console.error('Error capturing image:', data.error);
       }
@@ -163,7 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Upload image
   uploadButton.addEventListener('click', () => {
     const file = uploadInput.files[0];
     const formData = new FormData();
@@ -177,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        previewImage.src = data.imageUrl; // Show the final image URL from server
-        previewModal.style.display = 'block';  // Show the preview modal
+        previewImage.src = data.imageUrl;
+        previewModal.style.display = 'block';
       } else {
         console.error('Error uploading image:', data.error);
       }
@@ -188,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Post captured or uploaded image
   postButton.addEventListener('click', () => {
     fetch('/studio/post', {
       method: 'POST',
@@ -202,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.success) {
         alert('Image posted successfully');
         addThumbnail(data.image);
-        previewModal.style.display = 'none';  // Hide the preview modal
+        previewModal.style.display = 'none';
       } else {
         console.error('Error posting image:', data.error);
       }
@@ -212,19 +204,68 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Discard captured or uploaded image
-  discardButton.addEventListener('click', () => {
-    previewModal.style.display = 'none';  // Hide the preview modal
-    capturedImageData = null;
+  createGifButton.addEventListener('click', () => {
+    if (gifInProgress) return;
+    gifInProgress = true;
+    const captureInterval = 1000 / 15;
+    const captureDuration = 2000;
+    const captureCanvas = document.createElement('canvas');
+    captureCanvas.width = webcamElement.videoWidth;
+    captureCanvas.height = webcamElement.videoHeight;
+    const context = captureCanvas.getContext('2d');
+    const capturedFrames = [];
+    gifNotification.style.display = 'block';
+
+    const captureFrame = () => {
+      context.drawImage(webcamElement, 0, 0, captureCanvas.width, captureCanvas.height);
+      capturedFrames.push(captureCanvas.toDataURL('image/png'));
+
+      if (capturedFrames.length * captureInterval >= captureDuration) {
+        gifNotification.style.display = 'none';
+        sendFramesToServer(capturedFrames);
+      } else {
+        setTimeout(captureFrame, captureInterval);
+      }
+    };
+
+    captureFrame();
   });
 
-  // Close modal
-  closeModal.addEventListener('click', () => {
+  function sendFramesToServer(frames) {
+    fetch('/studio/create-gif', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ imageUrls: frames, delay: 1000 / 15, superposableImage: selectedSuperposableImage })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('GIF created successfully');
+        previewImage.src = data.imageUrl;
+        previewModal.style.display = 'block';
+        gifInProgress = false;
+      } else {
+        console.error('Error creating GIF:', data.error);
+        gifInProgress = false;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      gifInProgress = false;
+    });
+  }
+
+  discardButton.addEventListener('click', () => {
     previewModal.style.display = 'none';
   });
 
-  // Initialize
+  closePreview.addEventListener('click', () => {
+    previewModal.style.display = 'none';
+  });
+
   initWebcam();
   loadSuperposableImages();
-  loadThumbnails(true);  // Pass true to load user-specific thumbnails
+  loadThumbnails(true);
 });

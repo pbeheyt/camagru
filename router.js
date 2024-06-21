@@ -76,6 +76,7 @@ router.post('/studio/upload', authController.authenticateUser, studioController.
 router.post('/studio/capture', authController.authenticateUser, studioController.captureImage);
 router.post('/studio/post', authController.authenticateUser, studioController.postImage);
 router.delete('/studio/delete/:id', authController.authenticateUser, studioController.deleteImage);
+router.post('/studio/create-gif', authController.authenticateUser, studioController.createAnimatedGIF);
 
 // Add the route for fetching superposable images
 router.get('/images/superposable', studioController.getSuperposableImages);
