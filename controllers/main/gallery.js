@@ -43,7 +43,11 @@ exports.getImages = async (req, res) => {
       limit,
       offset,
       order: [['createdAt', 'DESC']],
-      include: [User, Like, Comment]
+      include: [
+        { model: User, as: 'User' },
+        { model: Like, as: 'Likes' },
+        { model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
+      ]
     });
     res.json({ success: true, images });
   } catch (error) {
@@ -51,6 +55,7 @@ exports.getImages = async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
+  
 
 exports.likeImage = async (req, res) => {
 	try {

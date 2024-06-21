@@ -25,9 +25,4 @@ Like.init({
   tableName: 'likes'
 });
 
-Like.belongsTo(User, { foreignKey: 'userId' });
-Like.belongsTo(Image, { foreignKey: 'imageId' });
-User.hasMany(Like, { foreignKey: 'userId' });
-Image.hasMany(Like, { foreignKey: 'imageId' });
-
 module.exports = Like;

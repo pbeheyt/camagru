@@ -34,9 +34,4 @@ Comment.init({
   tableName: 'comments'
 });
 
-Comment.belongsTo(User, { foreignKey: 'userId' });
-Comment.belongsTo(Image, { foreignKey: 'imageId' });
-User.hasMany(Comment, { foreignKey: 'userId' });
-Image.hasMany(Comment, { foreignKey: 'imageId' });
-
 module.exports = Comment;

@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
   
 	function displayImages(images) {
+	  // Clear the existing images
+	  imageFeed.innerHTML = '';
+  
 	  images.forEach(image => {
 		const imageContainer = document.createElement('div');
 		imageContainer.classList.add('image-container');
