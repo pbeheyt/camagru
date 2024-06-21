@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio - Camagru</title>
+  <link rel="stylesheet" href="/css/global.css">
+  <link rel="stylesheet" href="/css/studio.css">
+</head>
+<body>
+  <div id="header"></div>
+
+  <div class="studio-container">
+    <div class="main-section">
+      <div class="webcam-container">
+        <video id="webcam" autoplay playsinline></video>
+        <button id="capture-button" disabled>Capture</button>
+      </div>
+    </div>
+    <div class="side-section">
+      <h3>Your Previous Pictures</h3>
+      <div id="thumbnails" class="thumbnails-container">
+        <!-- Thumbnails of previous pictures will be dynamically added here -->
+      </div>
+      <h3>Superposable Images</h3>
+      <div id="superposable-images" class="superposable-images-container">
+        <!-- List of superposable images will be dynamically added here -->
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="/js/main/include.js"></script>
+  <script src="/js/main/studio.js"></script>
+</body>
+</html>
+

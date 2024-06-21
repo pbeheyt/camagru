@@ -1,0 +1,62 @@
+body {
+	font-family: Arial, sans-serif;
+  }
+  
+  .studio-container {
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+  }
+  
+  .main-section {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .webcam-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .webcam-container video {
+	width: 100%;
+	max-width: 600px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	margin-bottom: 10px;
+  }
+  
+  .webcam-container button {
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+  }
+  
+  .side-section {
+	flex: 1;
+	max-width: 300px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .thumbnails-container, .superposable-images-container {
+	width: 100%;
+	max-height: 300px;
+	overflow-y: auto;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	padding: 10px;
+	margin-bottom: 20px;
+  }
+  
+  .thumbnails-container img, .superposable-images-container img {
+	width: 100%;
+	max-width: 100px;
+	margin: 5px 0;
+	cursor: pointer;
+  }
+  
