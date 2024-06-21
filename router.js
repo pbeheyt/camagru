@@ -63,15 +63,21 @@ router.get('/password-reset/:token', authController.validateResetToken, (req, re
 });
 router.post('/password-reset/:token', passwordResetController.resetPassword);
 
+// Gallery
+router.get('/images', galleryController.getImages);
+router.post('/images/:id/like', authController.authenticateUser, galleryController.likeImage);
+router.post('/images/:id/comment', authController.authenticateUser, galleryController.commentImage);
+
 // Edit
-router.get('/edit', authController.authenticateUser, editController.renderEditPage);
+router.get('/edit', authController.authenticateUser,  (req, res) => {
+	res.sendFile(path.join(__dirname, 'views', 'main', 'studio.html'));
+  });
 router.post('/edit/upload', authController.authenticateUser, editController.uploadImage);
 router.post('/edit/capture', authController.authenticateUser, editController.captureImage);
 router.delete('/edit/delete/:id', authController.authenticateUser, editController.deleteImage);
 
 // Add the route for fetching superposable images
 router.get('/images/superposable', editController.getSuperposableImages);
-
 
 // Add the authentication check route
 router.get('/auth/check', (req, res) => {

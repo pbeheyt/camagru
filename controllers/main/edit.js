@@ -14,10 +14,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-exports.renderEditPage = (req, res) => {
-  res.sendFile(path.join(__dirname, '../../views/main/studio.html'));
-};
-
 exports.uploadImage = [
   upload.single('image'),
   async (req, res) => {
