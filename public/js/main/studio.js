@@ -73,14 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.success) {
           data.images.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           data.images.forEach(image => {
-            const img = document.createElement('img');
-            img.src = image.url;
-            img.addEventListener('click', () => {
-              if (confirm('Do you want to delete this image?')) {
-                deleteImage(image.id, img);
-              }
-            });
-            thumbnailsContainer.appendChild(img);
+            addThumbnail(image);
           });
         } else {
           console.error('Error fetching thumbnails:', data.error);
@@ -92,17 +85,30 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function addThumbnail(image) {
+    const thumbnailContainer = document.createElement('div');
+    thumbnailContainer.classList.add('thumbnail-container');
+
     const img = document.createElement('img');
     img.src = image.url;
-    img.addEventListener('click', () => {
+    img.classList.add('thumbnail-image');
+
+    const deleteOverlay = document.createElement('div');
+    deleteOverlay.classList.add('delete-overlay');
+    deleteOverlay.innerHTML = '&#10060;'; // Red Cross
+
+    deleteOverlay.addEventListener('click', (event) => {
+      event.stopPropagation();
       if (confirm('Do you want to delete this image?')) {
-        deleteImage(image.id, img);
+        deleteImage(image.id, thumbnailContainer);
       }
     });
-    thumbnailsContainer.insertBefore(img, thumbnailsContainer.firstChild);
+
+    thumbnailContainer.appendChild(img);
+    thumbnailContainer.appendChild(deleteOverlay);
+    thumbnailsContainer.insertBefore(thumbnailContainer, thumbnailsContainer.firstChild);
   }
 
-  function deleteImage(imageId, imgElement) {
+  function deleteImage(imageId, thumbnailElement) {
     fetch(`/studio/delete/${imageId}`, {
       method: 'DELETE',
       headers: {
@@ -113,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       if (data.success) {
         alert('Image deleted successfully');
-        imgElement.remove();
+        thumbnailElement.remove();
       } else {
         console.error('Error deleting image:', data.error);
       }
