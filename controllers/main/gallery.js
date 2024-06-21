@@ -2,28 +2,45 @@ const { Image, Like, Comment, User } = require('../../models');
 const { sendCommentNotificationEmail } = require('../../utils/mailer');
 
 exports.getImages = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = 5;
-  const offset = (page - 1) * limit;
-
-  try {
-    const images = await Image.findAll({
-      limit,
-      offset,
-      order: [['createdAt', 'DESC']],
-      include: [
-        { model: User, as: 'User' },
-        { model: Like, as: 'Likes' },
-        { model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
-      ]
-    });
-    res.json({ success: true, images });
-  } catch (error) {
-    console.error('Error fetching images:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-};
-
+	const page = parseInt(req.query.page) || 1;
+	const limit = 5;
+	const offset = (page - 1) * limit;
+	const userId = req.session.userId;
+	const isUserSpecific = req.query.user === 'true';
+  
+	try {
+	  let images;
+	  if (isUserSpecific && userId) {
+		images = await Image.findAll({
+		  where: { userId },
+		  limit,
+		  offset,
+		  order: [['createdAt', 'DESC']],
+		  include: [
+			{ model: User, as: 'User' },
+			{ model: Like, as: 'Likes' },
+			{ model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
+		  ]
+		});
+	  } else {
+		images = await Image.findAll({
+		  limit,
+		  offset,
+		  order: [['createdAt', 'DESC']],
+		  include: [
+			{ model: User, as: 'User' },
+			{ model: Like, as: 'Likes' },
+			{ model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
+		  ]
+		});
+	  }
+	  res.json({ success: true, images });
+	} catch (error) {
+	  console.error('Error fetching images:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };
+  
 exports.likeImage = async (req, res) => {
 	try {
 	  const { id } = req.params;

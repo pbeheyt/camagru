@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Load previous thumbnails
   function loadThumbnails() {
-    fetch('/images?user=true')  // Assuming this endpoint returns user's images
+    fetch('/images?user=true')
       .then(response => response.json())
       .then(data => {
         if (data.success) {
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = image.url;
             img.addEventListener('click', () => {
               if (confirm('Do you want to delete this image?')) {
-                deleteImage(image.id);
+                deleteImage(image.id, img);
               }
             });
             thumbnailsContainer.appendChild(img);
@@ -86,6 +86,40 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(error => {
         console.error('Error:', error);
       });
+  }
+
+  // Append new thumbnail to the thumbnails container
+  function addThumbnail(image) {
+    const img = document.createElement('img');
+    img.src = image.url;
+    img.addEventListener('click', () => {
+      if (confirm('Do you want to delete this image?')) {
+        deleteImage(image.id, img);
+      }
+    });
+    thumbnailsContainer.appendChild(img);
+  }
+
+  // Delete image
+  function deleteImage(imageId, imgElement) {
+    fetch(`/edit/delete/${imageId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Image deleted successfully');
+        imgElement.remove();  // Remove the image element from the DOM
+      } else {
+        console.error('Error deleting image:', data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   }
 
   // Capture image from webcam
@@ -115,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
           if (data.success) {
             alert('Image captured successfully');
-            loadThumbnails();
+            addThumbnail(data.image);
           } else {
             console.error('Error capturing image:', data.error);
           }
