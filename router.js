@@ -10,7 +10,7 @@ const passwordResetController = require('./controllers/auth/password-reset');
 const authController = require('./middlewares/auth');
 const profileController = require('./controllers/main/profile');
 const galleryController = require('./controllers/main/gallery');
-const editController = require('./controllers/main/edit');
+const studioController = require('./controllers/main/studio');
 
 // Home route
 router.get(['/home', '/'], (req, res) => {
@@ -68,16 +68,16 @@ router.get('/images', galleryController.getImages);
 router.post('/images/:id/like', authController.authenticateUser, galleryController.likeImage);
 router.post('/images/:id/comment', authController.authenticateUser, galleryController.commentImage);
 
-// Edit
+// studio
 router.get('/studio', authController.authenticateUser,  (req, res) => {
 	res.sendFile(path.join(__dirname, 'views', 'main', 'studio.html'));
   });
-router.post('/studio/upload', authController.authenticateUser, editController.uploadImage);
-router.post('/studio/capture', authController.authenticateUser, editController.captureImage);
-router.delete('/studio/delete/:id', authController.authenticateUser, editController.deleteImage);
+router.post('/studio/upload', authController.authenticateUser, studioController.uploadImage);
+router.post('/studio/capture', authController.authenticateUser, studioController.captureImage);
+router.delete('/studio/delete/:id', authController.authenticateUser, studioController.deleteImage);
 
 // Add the route for fetching superposable images
-router.get('/images/superposable', editController.getSuperposableImages);
+router.get('/images/superposable', studioController.getSuperposableImages);
 
 // Add the authentication check route
 router.get('/auth/check', (req, res) => {

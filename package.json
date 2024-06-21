@@ -20,6 +20,7 @@
 	"homepage": "https://github.com/pbeheyt/camagru#readme",
 	"dependencies": {
 		"bcrypt": "^5.1.1",
+		"canvas": "^2.11.2",
 		"cors": "^2.8.5",
 		"crypto": "^1.0.1",
 		"dotenv": "^10.0.0",

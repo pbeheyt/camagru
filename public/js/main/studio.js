@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let selectedSuperposableImage = null;
   let capturedImageData = null;
+  let uploadedImageData = null;
   captureButton.disabled = true;  // Disable capture button initially
 
   // Initialize webcam
@@ -135,22 +136,9 @@ document.addEventListener('DOMContentLoaded', function() {
     canvas.height = webcamElement.videoHeight;
     const context = canvas.getContext('2d');
     context.drawImage(webcamElement, 0, 0, canvas.width, canvas.height);
+    capturedImageData = canvas.toDataURL('image/png');
 
-    // Draw the selected superposable image on the canvas
-    if (selectedSuperposableImage) {
-      const overlayImage = new Image();
-      overlayImage.src = selectedSuperposableImage;
-      overlayImage.onload = () => {
-        context.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
-        capturedImageData = canvas.toDataURL('image/png');
-        previewImage.src = capturedImageData;
-        previewModal.style.display = 'block';  // Show the preview modal
-      };
-    }
-  });
-
-  // Post captured image
-  postButton.addEventListener('click', () => {
+    // Send captured image to server
     fetch('/studio/capture', {
       method: 'POST',
       headers: {
@@ -161,11 +149,11 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        alert('Image posted successfully');
-        addThumbnail(data.image);
-        previewModal.style.display = 'none';  // Hide the preview modal
+        uploadedImageData = data.image;
+        previewImage.src = data.image.url;
+        previewModal.style.display = 'block';  // Show the preview modal
       } else {
-        console.error('Error posting image:', data.error);
+        console.error('Error capturing image:', data.error);
       }
     })
     .catch(error => {
@@ -173,10 +161,35 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Post captured image
+  postButton.addEventListener('click', () => {
+    alert('Image posted successfully');
+    addThumbnail(uploadedImageData);
+    previewModal.style.display = 'none';  // Hide the preview modal
+  });
+
   // Discard captured image
   discardButton.addEventListener('click', () => {
-    previewModal.style.display = 'none';  // Hide the preview modal
-    capturedImageData = null;
+    fetch(`/studio/delete/${uploadedImageData.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Image discarded successfully');
+        previewModal.style.display = 'none';  // Hide the preview modal
+        capturedImageData = null;
+        uploadedImageData = null;
+      } else {
+        console.error('Error discarding image:', data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   });
 
   // Initialize
