@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let selectedSuperposableImage = null;
   let gifInProgress = false;
-  captureButton.disabled = true;
-  uploadButton.disabled = true;
-  createGifButton.disabled = true;
 
   async function initWebcam() {
     try {
@@ -39,9 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             img.classList.add('superposable-image');
             img.addEventListener('click', () => {
               selectedSuperposableImage = src;
-              captureButton.disabled = false;
-              uploadButton.disabled = false;
-              createGifButton.disabled = false;
               document.querySelectorAll('.superposable-image').forEach(image => {
                 image.classList.remove('selected');
               });
@@ -129,6 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   captureButton.addEventListener('click', () => {
+    if (!selectedSuperposableImage) {
+      alert('You should select a superposable image to create an image.');
+      return;
+    }
+
     const canvas = document.createElement('canvas');
     canvas.width = webcamElement.videoWidth;
     canvas.height = webcamElement.videoHeight;
@@ -158,6 +157,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   uploadButton.addEventListener('click', () => {
+    if (!selectedSuperposableImage) {
+      alert('You should select a superposable image to create an image.');
+      return;
+    }
+
     const file = uploadInput.files[0];
     const formData = new FormData();
     formData.append('image', file);
@@ -205,6 +209,10 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   createGifButton.addEventListener('click', () => {
+    if (!selectedSuperposableImage) {
+      alert('You should select a superposable image to create a GIF.');
+      return;
+    }
     if (gifInProgress) return;
     gifInProgress = true;
     const captureInterval = 1000 / 15;
