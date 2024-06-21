@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const gifNotification = document.getElementById('gif-notification');
   const discardButton = document.getElementById('discard-button');
   const closePreview = document.getElementById('close-preview');
+  const loadingOverlay = document.getElementById('loading-overlay');
 
   let selectedSuperposableImage = null;
   let gifInProgress = false;
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function loadSuperposableImages() {
-    fetch('/images/superposable')
+    return fetch('/images/superposable')
       .then(response => response.json())
       .then(data => {
         if (data.success) {
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function loadThumbnails(userSpecific = false) {
     const url = userSpecific ? '/images?user=true' : '/images';
-    fetch(url)
+    return fetch(url)
       .then(response => response.json())
       .then(data => {
         if (data.success) {
@@ -282,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
     previewModal.style.display = 'none';
   });
 
-  initWebcam();
-  loadSuperposableImages();
-  loadThumbnails(true);
+  Promise.all([initWebcam(), loadSuperposableImages(), loadThumbnails(true)]).then(() => {
+    loadingOverlay.classList.add('hidden');
+  });
 });
