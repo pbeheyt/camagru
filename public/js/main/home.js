@@ -20,16 +20,22 @@ document.addEventListener('DOMContentLoaded', function() {
 	  images.forEach(image => {
 		const imageContainer = document.createElement('div');
 		imageContainer.classList.add('image-container');
+		imageContainer.dataset.imageId = image.id;
   
 		const imgElement = document.createElement('img');
 		imgElement.src = image.url;
 		imgElement.alt = image.description;
+  
+		const usernameElement = document.createElement('p');
+		usernameElement.textContent = `Posted by: ${image.User.username}`;
   
 		const descriptionElement = document.createElement('p');
 		descriptionElement.textContent = image.description;
   
 		const likesElement = document.createElement('p');
 		likesElement.textContent = `${image.Likes.length} likes`;
+		likesElement.classList.add('like-count');
+		likesElement.dataset.imageId = image.id;
   
 		const commentsElement = document.createElement('div');
 		commentsElement.classList.add('comments-container');
@@ -41,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 		const likeButton = document.createElement('button');
 		likeButton.textContent = 'Like';
-		likeButton.addEventListener('click', () => likeImage(image.id));
+		likeButton.addEventListener('click', () => likeImage(image.id, likesElement));
   
 		const commentForm = document.createElement('form');
 		const commentInput = document.createElement('input');
@@ -57,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
   
 		imageContainer.appendChild(imgElement);
+		imageContainer.appendChild(usernameElement);
 		imageContainer.appendChild(descriptionElement);
 		imageContainer.appendChild(likesElement);
 		imageContainer.appendChild(commentsElement);
@@ -67,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  });
 	}
   
-	function likeImage(imageId) {
+	function likeImage(imageId, likesElement) {
 	  fetch(`/images/${imageId}/like`, {
 		method: 'POST',
 		headers: {
@@ -78,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  .then(data => {
 		if (data.success) {
 		  console.log('Image liked successfully');
-		  fetchImages();
+		  likesElement.textContent = `${data.likeCount} likes`;
 		} else {
 		  console.error('Error liking image:', data.error);
 		}

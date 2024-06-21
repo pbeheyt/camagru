@@ -53,20 +53,32 @@ exports.getImages = async (req, res) => {
 };
 
 exports.likeImage = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.session.userId;
-
-    const like = await Like.findOrCreate({
-      where: { userId, imageId: id }
-    });
-
-    res.json({ success: true, like });
-  } catch (error) {
-    console.error('Error liking image:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-};
+	try {
+	  const { id } = req.params;
+	  const userId = req.session.userId;
+  
+	  // Find or create a like
+	  const [like, created] = await Like.findOrCreate({
+		where: { userId, imageId: id }
+	  });
+  
+	  if (!created) {
+		// If the like already exists, it is removed
+		await Like.destroy({
+		  where: { userId, imageId: id }
+		});
+	  }
+  
+	  // Get the updated count of likes for the image
+	  const likeCount = await Like.count({ where: { imageId: id } });
+  
+	  res.json({ success: true, likeCount });
+	} catch (error) {
+	  console.error('Error liking image:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };
+  
 
 exports.commentImage = async (req, res) => {
   try {
