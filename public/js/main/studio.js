@@ -3,8 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const captureButton = document.getElementById('capture-button');
   const superposableImagesContainer = document.getElementById('superposable-images');
   const thumbnailsContainer = document.getElementById('thumbnails');
+  const previewModal = document.getElementById('preview-modal');
+  const previewImage = document.getElementById('preview-image');
+  const postButton = document.getElementById('post-button');
+  const discardButton = document.getElementById('discard-button');
 
   let selectedSuperposableImage = null;
+  let capturedImageData = null;
   captureButton.disabled = true;  // Disable capture button initially
 
   // Initialize webcam
@@ -64,8 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Load previous thumbnails
-  function loadThumbnails() {
-    fetch('/images?user=true')
+  function loadThumbnails(userSpecific = false) {
+    const url = userSpecific ? '/images?user=true' : '/images';
+    fetch(url)
       .then(response => response.json())
       .then(data => {
         if (data.success) {
@@ -136,33 +142,45 @@ document.addEventListener('DOMContentLoaded', function() {
       overlayImage.src = selectedSuperposableImage;
       overlayImage.onload = () => {
         context.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL('image/png');
-
-        fetch('/edit/capture', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ imageData, superposableImage: selectedSuperposableImage })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            alert('Image captured successfully');
-            addThumbnail(data.image);
-          } else {
-            console.error('Error capturing image:', data.error);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+        capturedImageData = canvas.toDataURL('image/png');
+        previewImage.src = capturedImageData;
+        previewModal.style.display = 'block';  // Show the preview modal
       };
     }
+  });
+
+  // Post captured image
+  postButton.addEventListener('click', () => {
+    fetch('/edit/capture', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ imageData: capturedImageData, superposableImage: selectedSuperposableImage })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Image posted successfully');
+        addThumbnail(data.image);
+        previewModal.style.display = 'none';  // Hide the preview modal
+      } else {
+        console.error('Error posting image:', data.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+
+  // Discard captured image
+  discardButton.addEventListener('click', () => {
+    previewModal.style.display = 'none';  // Hide the preview modal
+    capturedImageData = null;
   });
 
   // Initialize
   initWebcam();
   loadSuperposableImages();
-  loadThumbnails();
+  loadThumbnails(true);  // Pass true to load user-specific thumbnails
 });
