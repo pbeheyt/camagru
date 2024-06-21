@@ -78,6 +78,10 @@ router.post('/edit/upload', authController.authenticateUser, editController.uplo
 router.post('/edit/capture', authController.authenticateUser, editController.captureImage);
 router.delete('/edit/delete/:id', authController.authenticateUser, editController.deleteImage);
 
+// Add the route for fetching superposable images
+router.get('/images/superposable', editController.getSuperposableImages);
+
+
 // Add the authentication check route
 router.get('/auth/check', (req, res) => {
   res.json({ authenticated: req.session.userId ? true : false });

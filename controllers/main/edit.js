@@ -1,5 +1,6 @@
 const path = require('path');
-const { Image, User } = require('../../models');
+const fs = require('fs');
+const { Image } = require('../../models');
 const multer = require('multer');
 
 // Set up multer for image uploads
@@ -36,13 +37,12 @@ exports.uploadImage = [
 
 exports.captureImage = async (req, res) => {
   try {
-    // Assume `req.body.imageData` contains the base64 encoded image from the webcam
     const imageData = req.body.imageData;
     const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
     const filename = Date.now() + '.png';
     const filePath = path.join(__dirname, '../../uploads/', filename);
 
-    require("fs").writeFile(filePath, base64Data, 'base64', async (err) => {
+    fs.writeFile(filePath, base64Data, 'base64', async (err) => {
       if (err) {
         console.error('Error capturing image:', err);
         return res.status(500).json({ success: false, error: 'Internal Server Error' });
@@ -72,4 +72,17 @@ exports.deleteImage = async (req, res) => {
     console.error('Error deleting image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
+};
+
+exports.getSuperposableImages = (req, res) => {
+  const directoryPath = path.join(__dirname, '../../public/img/superposable');
+
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      return res.status(500).json({ success: false, error: 'Unable to scan directory' });
+    }
+
+    const images = files.map(file => `/img/superposable/${file}`);
+    res.json({ success: true, images });
+  });
 };
