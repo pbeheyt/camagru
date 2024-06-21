@@ -16,6 +16,10 @@
         <video id="webcam" autoplay playsinline></video>
         <button id="capture-button" disabled>Capture</button>
       </div>
+      <div class="upload-container">
+        <input type="file" id="upload-input">
+        <button id="upload-button" disabled>Upload</button>
+      </div>
     </div>
     <div class="side-section">
       <h3>Your Previous Pictures</h3>
@@ -29,8 +33,9 @@
     </div>
   </div>
 
-  <div id="preview-modal" class="modal">
+  <div id="preview-modal">
     <div class="modal-content">
+      <span id="close-modal">&times;</span>
       <img id="preview-image" src="" alt="Preview">
       <button id="post-button">Post</button>
       <button id="discard-button">Discard</button>

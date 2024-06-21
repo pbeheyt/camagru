@@ -74,6 +74,7 @@ router.get('/studio', authController.authenticateUser,  (req, res) => {
   });
 router.post('/studio/upload', authController.authenticateUser, studioController.uploadImage);
 router.post('/studio/capture', authController.authenticateUser, studioController.captureImage);
+router.post('/studio/post', authController.authenticateUser, studioController.postImage);
 router.delete('/studio/delete/:id', authController.authenticateUser, studioController.deleteImage);
 
 // Add the route for fetching superposable images

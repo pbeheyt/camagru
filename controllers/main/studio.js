@@ -15,65 +15,91 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-exports.uploadImage = [
-  upload.single('image'),
-  async (req, res) => {
-    try {
-      const image = await Image.create({
-        url: `/uploads/${req.file.filename}`,
-        userId: req.session.userId,
-        description: 'Uploaded image'
-      });
-      res.json({ success: true, image });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-    }
-  }
-];
-
 exports.captureImage = async (req, res) => {
-  try {
-    const { imageData, superposableImage } = req.body;
-
-    // Decode the base64 image data
-    const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
-    const buffer = Buffer.from(base64Data, 'base64');
-
-    // Load the webcam image
-    const webcamImage = await loadImage(buffer);
-
-    // Load the superposable image
-    const superposableImagePath = path.join(__dirname, '../../public/img/superposable', path.basename(superposableImage));
-    const overlayImage = await loadImage(superposableImagePath);
-
-    // Create a canvas and draw both images on it
-    const canvas = createCanvas(webcamImage.width, webcamImage.height);
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(webcamImage, 0, 0);
-    ctx.drawImage(overlayImage, 0, 0, webcamImage.width, webcamImage.height);
-
-    // Save the final image
-    const filename = `${Date.now()}.png`;
-    const outputPath = path.join(__dirname, '../../uploads', filename);
-    const out = fs.createWriteStream(outputPath);
-    const stream = canvas.createPNGStream();
-    stream.pipe(out);
-    out.on('finish', async () => {
-      const image = await Image.create({
-        url: `/uploads/${filename}`,
-        userId: req.session.userId,
-        description: 'Captured image'
-      });
-      res.json({ success: true, image });
-    });
-  } catch (error) {
-    console.error('Error capturing image:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-};
-
-exports.deleteImage = async (req, res) => {
+	try {
+	  const imageData = req.body.imageData;
+	  const superposableImage = req.body.superposableImage;
+	  const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
+	  const filename = Date.now() + '-captured.png';
+	  const filePath = path.join(__dirname, '../../uploads/', filename);
+  
+	  const canvas = createCanvas(640, 480); // Adjust the canvas size as needed
+	  const context = canvas.getContext('2d');
+  
+	  // Draw the main image (webcam or uploaded image)
+	  const img = await loadImage(`data:image/png;base64,${base64Data}`);
+	  context.drawImage(img, 0, 0, canvas.width, canvas.height);
+  
+	  // Draw the superposable image
+	  if (superposableImage) {
+		const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+		context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+	  }
+  
+	  // Save the final image
+	  const out = fs.createWriteStream(filePath);
+	  const stream = canvas.createPNGStream();
+	  stream.pipe(out);
+	  out.on('finish', () => {
+		res.json({ success: true, imageUrl: `/uploads/${filename}` });
+	  });
+	} catch (error) {
+	  console.error('Error capturing image:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };
+  
+  exports.uploadImage = [
+	upload.single('image'),
+	async (req, res) => {
+	  try {
+		const superposableImage = req.body.superposableImage;
+		const filename = Date.now() + '-uploaded.png';
+		const filePath = path.join(__dirname, '../../uploads/', filename);
+  
+		const canvas = createCanvas(640, 480); // Adjust the canvas size as needed
+		const context = canvas.getContext('2d');
+  
+		// Draw the uploaded image
+		const img = await loadImage(req.file.path);
+		context.drawImage(img, 0, 0, canvas.width, canvas.height);
+  
+		// Draw the superposable image
+		if (superposableImage) {
+		  const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+		  context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+		}
+  
+		// Save the final image
+		const out = fs.createWriteStream(filePath);
+		const stream = canvas.createPNGStream();
+		stream.pipe(out);
+		out.on('finish', () => {
+		  res.json({ success: true, imageUrl: `/uploads/${filename}` });
+		});
+	  } catch (error) {
+		console.error('Error uploading image:', error);
+		res.status(500).json({ success: false, error: 'Internal Server Error' });
+	  }
+	}
+  ];
+  
+  exports.postImage = async (req, res) => {
+	try {
+	  const imageUrl = req.body.imageUrl;
+	  const image = await Image.create({
+		url: imageUrl,
+		userId: req.session.userId,
+		description: 'Posted image'
+	  });
+	  res.json({ success: true, image });
+	} catch (error) {
+	  console.error('Error posting image:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };
+  
+  exports.deleteImage = async (req, res) => {
 	try {
 	  const image = await Image.findOne({ where: { id: req.params.id, userId: req.session.userId } });
 	  if (!image) {
