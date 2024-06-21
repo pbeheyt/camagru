@@ -163,6 +163,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const file = uploadInput.files[0];
+    if (!file) {
+      alert('You should upload a file to create an image.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('image', file);
     formData.append('superposableImage', selectedSuperposableImage);
