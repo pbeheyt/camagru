@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     captureCanvas.height = webcamElement.videoHeight;
     const context = captureCanvas.getContext('2d');
     const capturedFrames = [];
+    gifNotification.textContent = 'Recording GIF...';
     gifNotification.style.display = 'block';
 
     const captureFrame = () => {
@@ -221,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
       capturedFrames.push(captureCanvas.toDataURL('image/png'));
 
       if (capturedFrames.length * captureInterval >= captureDuration) {
-        gifNotification.style.display = 'none';
+        gifNotification.textContent = 'Processing image to server...';
         sendFramesToServer(capturedFrames);
       } else {
         setTimeout(captureFrame, captureInterval);
@@ -245,14 +246,17 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('GIF created successfully');
         previewImage.src = data.imageUrl;
         previewModal.style.display = 'block';
+        gifNotification.style.display = 'none';
         gifInProgress = false;
       } else {
         console.error('Error creating GIF:', data.error);
+        gifNotification.style.display = 'none';
         gifInProgress = false;
       }
     })
     .catch(error => {
       console.error('Error:', error);
+      gifNotification.style.display = 'none';
       gifInProgress = false;
     });
   }
