@@ -63,15 +63,6 @@ router.get('/password-reset/:token', authController.validateResetToken, (req, re
 });
 router.post('/password-reset/:token', passwordResetController.resetPassword);
 
-// Gallery
-router.get('/images', galleryController.getImages);
-router.post('/images/:id/like', authController.authenticateUser, galleryController.likeImage);
-router.post('/images/:id/comment', authController.authenticateUser, galleryController.commentImage);
-router.get('/upload', authController.authenticateUser, (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'main', 'upload.html'));
-});
-router.post('/upload', authController.authenticateUser, galleryController.uploadImage);
-
 // Edit
 router.get('/edit', authController.authenticateUser, editController.renderEditPage);
 router.post('/edit/upload', authController.authenticateUser, editController.uploadImage);

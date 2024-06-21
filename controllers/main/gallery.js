@@ -1,37 +1,5 @@
 const { Image, Like, Comment, User } = require('../../models');
 const { sendCommentNotificationEmail } = require('../../utils/mailer');
-const multer = require('multer');
-const path = require('path');
-const { authenticateUser } = require('../../middlewares/auth');
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append the file extension
-  }
-});
-
-const upload = multer({ storage });
-
-exports.uploadImage = [
-  authenticateUser,
-  upload.single('image'),
-  async (req, res) => {
-    try {
-      const image = await Image.create({
-        url: `/uploads/${req.file.filename}`,
-        description: req.body.description,
-        userId: req.session.userId
-      });
-      res.json({ success: true, image });
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-    }
-  }
-];
 
 exports.getImages = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
