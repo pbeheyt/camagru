@@ -1,5 +1,5 @@
 const { Image, Like, Comment, User } = require('../../models');
-const nodemailer = require('nodemailer');
+const { sendCommentNotificationEmail } = require('../../utils/mailer');
 const multer = require('multer');
 const path = require('path');
 const { authenticateUser } = require('../../middlewares/auth');
@@ -79,52 +79,31 @@ exports.likeImage = async (req, res) => {
 	}
   };
   
-
-exports.commentImage = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { text } = req.body;
-    const userId = req.session.userId;
-
-    const comment = await Comment.create({
-      userId,
-      imageId: id,
-      text
-    });
-
-    const image = await Image.findByPk(id, {
-      include: [User]
-    });
-
-    if (image && image.User.emailNotifications) {
-      const user = await User.findByPk(userId);
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
-
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: image.User.email,
-        subject: 'New comment on your image',
-        text: `User ${user.username} commented on your image: ${text}`
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error('Error sending email:', error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-    }
-
-    res.json({ success: true, comment });
-  } catch (error) {
-    console.error('Error commenting on image:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-};
+  exports.commentImage = async (req, res) => {
+	try {
+	  const { id } = req.params;
+	  const { text } = req.body;
+	  const userId = req.session.userId;
+  
+	  const comment = await Comment.create({
+		userId,
+		imageId: id,
+		text
+	  });
+  
+	  const user = await User.findByPk(userId);
+	  const image = await Image.findByPk(id, {
+		include: [User]
+	  });
+  
+	  if (image && image.User.email) {
+		await sendCommentNotificationEmail(image.User, user, text);
+	  }
+  
+	  res.json({ success: true, comment: { text: comment.text, username: user.username } });
+	} catch (error) {
+	  console.error('Error commenting on image:', error);
+	  res.status(500).json({ success: false, error: 'Internal Server Error' });
+	}
+  };
+  

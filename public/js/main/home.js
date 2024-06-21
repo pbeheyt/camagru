@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 		const commentsElement = document.createElement('div');
 		commentsElement.classList.add('comments-container');
+		commentsElement.dataset.imageId = image.id; // Add dataset attribute for later reference
 		image.Comments.forEach(comment => {
 		  const commentElement = document.createElement('p');
 		  commentElement.textContent = `${comment.User.username}: ${comment.text}`;
@@ -59,7 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		commentForm.appendChild(commentButton);
 		commentForm.addEventListener('submit', (event) => {
 		  event.preventDefault();
-		  commentImage(image.id, commentInput.value);
+		  commentImage(image.id, commentInput.value, commentsElement);
+		  commentInput.value = ''; // Clear the input field after submitting
 		});
   
 		imageContainer.appendChild(imgElement);
@@ -95,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  });
 	}
   
-	function commentImage(imageId, text) {
+	function commentImage(imageId, text, commentsElement) {
 	  fetch(`/images/${imageId}/comment`, {
 		method: 'POST',
 		headers: {
@@ -107,7 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	  .then(data => {
 		if (data.success) {
 		  console.log('Comment added successfully');
-		  fetchImages();
+		  const commentElement = document.createElement('p');
+		  commentElement.textContent = `${data.comment.username}: ${data.comment.text}`;
+		  commentsElement.appendChild(commentElement);
 		} else {
 		  console.error('Error adding comment:', data.error);
 		}
