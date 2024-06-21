@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const imageFeed = document.getElementById('image-feed');
+	let isAuthenticated = false;
+  
+	// Check if the user is authenticated
+	function checkAuth() {
+	  return fetch('/auth/check')
+		.then(response => response.json())
+		.then(data => {
+		  isAuthenticated = data.authenticated;
+		});
+	}
   
 	function fetchImages(page = 1) {
 	  fetch(`/images?page=${page}`)
@@ -42,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 		const commentsElement = document.createElement('div');
 		commentsElement.classList.add('comments-container');
-		commentsElement.dataset.imageId = image.id; // Add dataset attribute for later reference
+		commentsElement.dataset.imageId = image.id;
 		image.Comments.forEach(comment => {
 		  const commentElement = document.createElement('p');
 		  commentElement.textContent = `${comment.User.username}: ${comment.text}`;
@@ -51,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
 		const likeButton = document.createElement('button');
 		likeButton.textContent = 'Like';
-		likeButton.addEventListener('click', () => likeImage(image.id, likesElement));
+		likeButton.addEventListener('click', () => {
+		  if (isAuthenticated) {
+			likeImage(image.id, likesElement);
+		  } else {
+			alert('You need to log in to like an image.');
+		  }
+		});
   
 		const commentForm = document.createElement('form');
 		const commentInput = document.createElement('input');
@@ -63,8 +79,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		commentForm.appendChild(commentButton);
 		commentForm.addEventListener('submit', (event) => {
 		  event.preventDefault();
-		  commentImage(image.id, commentInput.value, commentsElement);
-		  commentInput.value = ''; // Clear the input field after submitting
+		  if (isAuthenticated) {
+			commentImage(image.id, commentInput.value, commentsElement);
+			commentInput.value = ''; // Clear the input field after submitting
+		  } else {
+			alert('You need to log in to comment.');
+		  }
 		});
   
 		imageContainer.appendChild(imgElement);
@@ -124,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	  });
 	}
   
-	fetchImages();
+	// First check if the user is authenticated, then fetch images
+	checkAuth().then(fetchImages);
   });
   

@@ -80,6 +80,11 @@ router.get('/upload', authenticateUser, (req, res) => {
 router.post('/upload', authenticateUser, uploadImage);
 
 
+// Add the authentication check route
+router.get('/auth/check', (req, res) => {
+	res.json({ authenticated: req.session.userId ? true : false });
+});
+
 // Catch-all route for 404 errors
 router.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'views', 'main', '404.html'));
