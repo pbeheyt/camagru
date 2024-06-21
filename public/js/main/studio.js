@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Delete image
   function deleteImage(imageId, imgElement) {
-    fetch(`/edit/delete/${imageId}`, {
+    fetch(`/studio/delete/${imageId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Post captured image
   postButton.addEventListener('click', () => {
-    fetch('/edit/capture', {
+    fetch('/studio/capture', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
