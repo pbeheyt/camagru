@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
 const sequelize = require('./database/init');
 const router = require('./router');
@@ -8,6 +9,10 @@ const sessionToLocals = require('./middlewares/sessionToLocals');
 const { Image, Like, Comment, User } = require('./models');
 
 const app = express();
+
+// Set up body-parser middleware with increased limit
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Set up static file serving
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,6 +37,23 @@ app.use(sessionToLocals);
 
 // Mount the routes on a specific route
 app.use('/', router);
+
+// Middleware to log the size of the incoming request
+app.use((req, res, next) => {
+	req.on('data', chunk => {
+	  console.log(`Received ${chunk.length} bytes of data.`);
+	});
+	req.on('end', () => {
+	  console.log('Request ended.');
+	});
+	next();
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+	console.error(err.stack);
+	res.status(500).send('Something broke!');
+});
 
 // Initialize the database connection
 const forceSync = process.env.FORCE_SYNC === 'true';
