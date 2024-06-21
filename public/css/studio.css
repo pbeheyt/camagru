@@ -59,4 +59,34 @@ body {
 	margin: 5px 0;
 	cursor: pointer;
   }
+
+  .superposable-image {
+	cursor: pointer;
+	transition: transform 0.3s;
+  }
+  
+  .superposable-image.selected {
+	transform: scale(1.1);
+	border: 2px solid #007bff;
+  }
+  
+  .webcam-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	opacity: 0.7; /* Adjust the transparency */
+  }
+  
+  .webcam-container {
+	position: relative;
+  }
+  
+  .webcam-container video {
+	width: 100%;
+	height: auto;
+  }
+  
   
