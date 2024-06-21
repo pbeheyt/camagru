@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const discardButton = document.getElementById('discard-button');
   const closePreview = document.getElementById('close-preview');
   const loadingOverlay = document.getElementById('loading-overlay');
+  const shareImgur = document.getElementById('share-imgur');
 
   let selectedSuperposableImage = null;
   let gifInProgress = false;
+  let currentImageUrl = '';
 
   async function initWebcam() {
     try {
@@ -153,7 +155,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       if (data.success) {
         previewImage.src = data.imageUrl;
+        currentImageUrl = data.imageUrl;
         previewModal.style.display = 'block';
+        updateShareLinks(data.imageUrl);
       } else {
         console.error('Error capturing image:', data.error);
       }
@@ -187,7 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       if (data.success) {
         previewImage.src = data.imageUrl;
+        currentImageUrl = data.imageUrl;
         previewModal.style.display = 'block';
+        updateShareLinks(data.imageUrl);
       } else {
         console.error('Error uploading image:', data.error);
       }
@@ -265,9 +271,11 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.success) {
         alert('GIF created successfully');
         previewImage.src = data.imageUrl;
+        currentImageUrl = data.imageUrl;
         previewModal.style.display = 'block';
         gifNotification.style.display = 'none';
         gifInProgress = false;
+        updateShareLinks(data.imageUrl);
       } else {
         console.error('Error creating GIF:', data.error);
         gifNotification.style.display = 'none';
@@ -288,6 +296,32 @@ document.addEventListener('DOMContentLoaded', function() {
   closePreview.addEventListener('click', () => {
     previewModal.style.display = 'none';
   });
+
+  function updateShareLinks(imageUrl) {
+    shareImgur.addEventListener('click', () => {
+      const description = document.getElementById('imgur-description').value;
+  
+      fetch('/studio/share-imgur', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imageUrl, description })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.open(data.imgurLink, '_blank');
+        } else {
+          console.error('Error sharing on imgur:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  }
+  
 
   Promise.all([initWebcam(), loadSuperposableImages(), loadThumbnails(true)]).then(() => {
     loadingOverlay.classList.add('hidden');

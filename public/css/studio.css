@@ -215,3 +215,20 @@ body {
 #loading-overlay.hidden {
     display: none;
 }
+
+.share-buttons {
+	margin-top: 10px;
+	display: flex;
+	gap: 10px;
+  }
+  
+  #share-twitter {
+	padding: 10px;
+	background-color: #1DA1F2;
+	color: white;
+	text-decoration: none;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+  }
+  

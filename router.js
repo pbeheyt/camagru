@@ -11,6 +11,7 @@ const authController = require('./middlewares/auth');
 const profileController = require('./controllers/main/profile');
 const galleryController = require('./controllers/main/gallery');
 const studioController = require('./controllers/main/studio');
+const imgurController = require('./controllers/social/imgurController');
 
 // Home route
 router.get(['/home', '/'], (req, res) => {
@@ -80,6 +81,9 @@ router.post('/studio/create-gif', authController.authenticateUser, studioControl
 
 // Add the route for fetching superposable images
 router.get('/images/superposable', studioController.getSuperposableImages);
+
+// Add the new route for sharing on Imgur
+router.post('/studio/share-imgur', authController.authenticateUser, imgurController.shareOnImgur);
 
 // Add the authentication check route
 router.get('/auth/check', (req, res) => {
