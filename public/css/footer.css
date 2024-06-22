@@ -3,7 +3,7 @@
 footer {
     width: 100%;
     background-color: #fff;
-    padding: 20px;
+    padding: 10px;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: fixed; /* Make the footer fixed at the bottom */
@@ -11,4 +11,5 @@ footer {
     left: 0;
     right: 0;
     z-index: 1000; /* Ensure it stays on top */
+	color: #3786dd;
 }
