@@ -56,7 +56,12 @@ main {
 h1 {
     margin-top: 0;
     text-align: center;
+	padding: 30px;
     color: #3786dd;
+}
+
+p {
+	margin-bottom: 8px;
 }
 
 form {
