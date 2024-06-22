@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	  if (page > totalPages || isLoading) {
 		return;
 	  }
-	  console.log('Fetching images for page', page);
 	  isLoading = true;
 	  loadingSpinner.style.display = 'block';
   
