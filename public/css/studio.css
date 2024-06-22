@@ -219,6 +219,36 @@ body {
   height: auto;
   display: block;
   margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding-top: 60px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border-radius: 8px;
+}
+
+.modal-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
   border-radius: 8px;
 }
 
@@ -241,8 +271,8 @@ body {
   height: auto;
 }
 
-#post-button, #discard-button {
-  margin-top: 10px;
+#post-button, #discard-button, #share-imgur {
+  flex: 1;
   padding: 10px;
   background-color: #3786dd;
   color: white;
@@ -250,22 +280,30 @@ body {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-right: 10px; /* Add spacing between buttons */
 }
+
+#imgur-description {
+  width: calc(100% - 40px); /* Full width minus padding */
+  padding: 10px;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f4f7f9; /* Background color of the input */
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
 
 .webcam-container button:hover, 
 .upload-container button:hover,
 .button-container .capture-button:hover, 
 .button-container .create-gif-button:hover,
 #post-button:hover,
-#discard-button:hover {
+#discard-button:hover,
+#share-imgur:hover {
   background-color: rgb(20,180,236);
   transform: scale(1.01);
-}
-
-.share-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
 }
 
 #loading-overlay {
@@ -301,6 +339,3 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* .hidden {
-  display: none;
-} */
