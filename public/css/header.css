@@ -36,8 +36,8 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    color: #2c8ce4;
-    text-decoration: underline;
+    color: rgb(20,180,236); /* Lightest color of the palette */
+    text-decoration: none; /* Remove underline on hover */
 }
 
 .logo img {
