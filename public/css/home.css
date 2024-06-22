@@ -1,98 +1,169 @@
 .home-container {
-	padding: 20px;
-	text-align: center;
-	color: #333;
-  }
-  
-  #image-feed {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-  }
-  
-  .image-container {
-	width: 80%;
-	max-width: 600px;
-	margin-bottom: 20px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	padding: 20px 0;
-	background-color: #fff;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .image-container img {
-	max-width: 100%;
-  }
-  
-  .user-info {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 10px;
-	color: #333;
-  }
-  
-  .username {
-	font-weight: bold;
-	color: #333;
-	margin-left: 20px;
-  }
-  
-  .date {
-	font-size: 0.9em;
-	margin-right: 20px;
-  }
-  
-  .description {
-	margin: 20px 20px;
-	text-align: left;
-	color: #333;
-  }
-  
-  .actions {
-	display: flex;
-	align-items: center;
-	margin-bottom: 10px;
-  }
-  
-  .like-button {
-	width: 24px;
-	height: 24px;
-	margin: 0 10px;
-	cursor: pointer;
-	transition: transform 0.3s ease;
-  }
-  
-  .like-button:hover {
-	transform: scale(1.1);
-  }
-  
-  .like-count {
-	/* margin-left: 10px; */
-  }
-  
-  .comments-container {
-	margin-top: 10px;
-	text-align: left;
-  }
-  
-  .comments-container p {
-	margin: 5px 0;
-  }
-  
-  .loading-spinner {
-	display: none;
-	margin: 20px auto;
-	border: 4px solid #f3f3f3;
-	border-top: 4px solid #3786dd;
-	border-radius: 50%;
-	width: 40px;
-	height: 40px;
-	animation: spin 0.5s linear infinite;
-  }
-  
-  @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-  }
-  
+  padding: 20px;
+  text-align: center;
+  color: #333;
+}
+
+#image-feed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-container {
+  width: 80%;
+  max-width: 600px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-container img {
+  max-width: 100%;
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.username {
+  font-weight: bold;
+  color: #333;
+  margin-left: 20px;
+}
+
+.date {
+  font-size: 0.9em;
+  margin-right: 20px;
+}
+
+.description {
+  margin: 20px 20px;
+  text-align: left;
+  color: #333;
+}
+
+.description .username {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.description .description-text {
+  margin-left: 10px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+.like-button {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.like-count {
+  font-size: 1em;
+  color: #333;
+  font-weight: bold;
+}
+
+.like-button:hover {
+  transform: scale(1.1);
+}
+
+.comments-title-container {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  margin: 10px 20px;
+}
+
+.comments-title {
+  text-align: left;
+  font-weight: bold;
+}
+
+.title-stripe, .description-stripe {
+  border: none;
+  border-bottom: 2px solid #ccc;
+  margin: 0 20px;
+}
+
+.comments-container {
+  text-align: left;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.comments-container .comment {
+  margin: 5px 0;
+}
+
+.comments-container .comment .comment-username {
+  font-weight: bold;
+}
+
+.comments-container .comment .comment-text {
+  color: #555;
+}
+
+.comment-form {
+  display: flex;
+  margin: 0 10px;
+  box-shadow: none; /* Ensure no shadow */
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 12px;
+  background-color: #f4f7f9; /* Background color of the input */
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.comment-button {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  border-radius: 0 4px 4px 0;
+  background-color: transparent;
+  border: none;
+  margin-left: 12px;
+  align-self: center;
+}
+
+.comment-button:hover {
+  transform: scale(1.1);
+}
+
+.loading-spinner {
+  display: none;
+  margin: 20px auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3786dd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
