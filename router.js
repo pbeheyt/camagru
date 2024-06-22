@@ -70,10 +70,7 @@ router.post('/images/:id/like', authController.authenticateUser, galleryControll
 router.post('/images/:id/comment', authController.authenticateUser, galleryController.commentImage);
 
 // studio
-// router.get('/studio', authController.authenticateUser,  (req, res) => {
-// 	res.sendFile(path.join(__dirname, 'views', 'main', 'studio.html'));
-// });
-router.get('/studio',  (req, res) => {
+router.get('/studio', authController.authenticateUser,  (req, res) => {
 	res.sendFile(path.join(__dirname, 'views', 'main', 'studio.html'));
 });
 router.post('/studio/upload', authController.authenticateUser, studioController.uploadImage);
