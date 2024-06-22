@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	let selectedSuperposableImage = null;
 	let gifInProgress = false;
-	let currentImageUrl = '';
   
 	async function initWebcam() {
 	  try {
@@ -69,24 +68,24 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   
-	function loadThumbnails(userSpecific = false) {
-	  const url = userSpecific ? '/images?user=true' : '/images';
-	  return fetch(url)
-		.then(response => response.json())
-		.then(data => {
-		  if (data.success) {
-			data.images.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-			data.images.forEach(image => {
-			  addThumbnail(image);
-			});
-		  } else {
-			console.error('Error fetching thumbnails:', data.error);
-		  }
-		})
-		.catch(error => {
-		  console.error('Error:', error);
-		});
-	}
+  function loadThumbnails(userSpecific = false) {
+    const url = userSpecific ? '/images?user=true&limit=100' : '/images?limit=100';
+    return fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          data.images.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          data.images.forEach(image => {
+            addThumbnail(image);
+          });
+        } else {
+          console.error('Error fetching thumbnails:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
   
 	function addThumbnail(image) {
 	  const thumbnailContainer = document.createElement('div');

@@ -42,11 +42,23 @@ body {
   margin-bottom: 40px;
 }
 
+.thumbnails-container, .superposable-images-container {
+max-height: 500px; /* or use another unit like vh or % */
+overflow-y: auto; /* Enable vertical scrolling */
+}
+
 .webcam-container {
   position: relative;
 }
 
+.video-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .webcam-container video {
+  max-width: 1200px;
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -99,6 +111,9 @@ body {
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(55, 134, 221, 255);
+  flex: 1;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(50vh - 40px); /* Limit the height to half the viewport height minus padding */
 }
 
 .superposable-image {

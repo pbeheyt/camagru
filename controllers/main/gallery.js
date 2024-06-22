@@ -3,7 +3,7 @@ const { sendCommentNotificationEmail } = require('../../utils/mailer');
 
 exports.getImages = async (req, res) => {
 	const page = parseInt(req.query.page) || 1;
-	const limit = 5;
+  const limit = parseInt(req.query.limit) || 5; 
 	const offset = (page - 1) * limit;
 	const userId = req.session.userId;
 	const isUserSpecific = req.query.user === 'true';
