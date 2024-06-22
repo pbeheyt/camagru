@@ -9,9 +9,9 @@ exports.getImages = async (req, res) => {
 	const isUserSpecific = req.query.user === 'true';
   
 	try {
-	  let images;
+	  let images, count;
 	  if (isUserSpecific && userId) {
-		images = await Image.findAll({
+		const result = await Image.findAndCountAll({
 		  where: { userId },
 		  limit,
 		  offset,
@@ -22,8 +22,10 @@ exports.getImages = async (req, res) => {
 			{ model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
 		  ]
 		});
+		images = result.rows;
+		count = result.count;
 	  } else {
-		images = await Image.findAll({
+		const result = await Image.findAndCountAll({
 		  limit,
 		  offset,
 		  order: [['createdAt', 'DESC']],
@@ -33,13 +35,17 @@ exports.getImages = async (req, res) => {
 			{ model: Comment, as: 'Comments', include: [{ model: User, as: 'User' }] }
 		  ]
 		});
+		images = result.rows;
+		count = result.count;
 	  }
-	  res.json({ success: true, images });
+	  const totalPages = Math.ceil(count / limit);
+	  res.json({ success: true, images, totalPages, currentPage: page });
 	} catch (error) {
 	  console.error('Error fetching images:', error);
 	  res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
   };
+  
   
 exports.likeImage = async (req, res) => {
 	try {

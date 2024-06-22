@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const imageFeed = document.getElementById('image-feed');
+	const loadingSpinner = document.getElementById('loading-spinner');
 	let isAuthenticated = false;
+	let currentPage = 1;
+	let totalPages = 1;
+	let isLoading = false;
   
 	// Check if the user is authenticated
 	function checkAuth() {
@@ -12,24 +16,35 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
   
 	function fetchImages(page = 1) {
-	  fetch(`/images?page=${page}`)
-		.then(response => response.json())
-		.then(data => {
-		  if (data.success) {
-			displayImages(data.images);
-		  } else {
-			console.error('Error fetching images:', data.error);
-		  }
-		})
-		.catch(error => {
-		  console.error('Error:', error);
-		});
+	  if (page > totalPages || isLoading) {
+		return;
+	  }
+	  console.log('Fetching images for page', page);
+	  isLoading = true;
+	  loadingSpinner.style.display = 'block';
+  
+	  setTimeout(() => {
+		fetch(`/images?page=${page}`)
+		  .then(response => response.json())
+		  .then(data => {
+			loadingSpinner.style.display = 'none';
+			isLoading = false;
+  
+			if (data.success) {
+			  appendImages(data.images);
+			  currentPage = data.currentPage;
+			  totalPages = data.totalPages; // Update totalPages from the response
+			}
+		  })
+		  .catch(error => {
+			loadingSpinner.style.display = 'none';
+			isLoading = false;
+			console.error('Error fetching images:', error);
+		  });
+	  }, 1000); // 1000ms delay for loading animation
 	}
   
-	function displayImages(images) {
-	  // Clear the existing images
-	  imageFeed.innerHTML = '';
-  
+	function appendImages(images) {
 	  images.forEach(image => {
 		const imageContainer = document.createElement('div');
 		imageContainer.classList.add('image-container');
@@ -109,14 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	  .then(response => response.json())
 	  .then(data => {
 		if (data.success) {
-		  console.log('Image liked successfully');
 		  likesElement.textContent = `${data.likeCount} likes`;
-		} else {
-		  console.error('Error liking image:', data.error);
 		}
-	  })
-	  .catch(error => {
-		console.error('Error:', error);
 	  });
 	}
   
@@ -131,20 +140,29 @@ document.addEventListener('DOMContentLoaded', function() {
 	  .then(response => response.json())
 	  .then(data => {
 		if (data.success) {
-		  console.log('Comment added successfully');
 		  const commentElement = document.createElement('p');
 		  commentElement.textContent = `${data.comment.username}: ${data.comment.text}`;
 		  commentsElement.appendChild(commentElement);
-		} else {
-		  console.error('Error adding comment:', data.error);
 		}
-	  })
-	  .catch(error => {
-		console.error('Error:', error);
 	  });
 	}
   
+	function handleScroll() {
+	  const windowHeight = window.innerHeight;
+	  const lastImageContainer = document.querySelector('.image-container:last-child');
+  
+	  if (lastImageContainer) {
+		const lastImageBottom = lastImageContainer.getBoundingClientRect().bottom;
+  
+		if (lastImageBottom <= windowHeight + 100) {
+		  fetchImages(currentPage + 1);
+		}
+	  }
+	}
+  
+	window.addEventListener('scroll', handleScroll);
+  
 	// First check if the user is authenticated, then fetch images
-	checkAuth().then(fetchImages);
+	checkAuth().then(() => fetchImages(currentPage));
   });
   
