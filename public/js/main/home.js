@@ -44,81 +44,109 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
   
 	function appendImages(images) {
-	  images.forEach(image => {
-		const imageContainer = document.createElement('div');
-		imageContainer.classList.add('image-container');
-		imageContainer.dataset.imageId = image.id;
-  
-		const userInfoElement = document.createElement('div');
-		userInfoElement.classList.add('user-info');
-		userInfoElement.textContent = `Posted by: ${image.User.username}`;
-  
-		const imgElement = document.createElement('img');
-		imgElement.src = image.url;
-		imgElement.alt = image.description;
-  
-		const descriptionElement = document.createElement('p');
-		descriptionElement.classList.add('description');
-		descriptionElement.textContent = image.description;
-  
-		const actionsElement = document.createElement('div');
-		actionsElement.classList.add('actions');
-  
-		const likeButton = document.createElement('img');
-		likeButton.src = '/img/asset/like-off.png';
-		likeButton.classList.add('like-button');
-		likeButton.addEventListener('click', () => {
-		  if (isAuthenticated) {
-			likeImage(image.id, likeButton, likesElement);
-		  } else {
-			alert('You need to log in to like an image.');
-		  }
+		images.forEach(image => {
+		  const imageContainer = document.createElement('div');
+		  imageContainer.classList.add('image-container');
+		  imageContainer.dataset.imageId = image.id;
+	  
+		  const userInfoElement = document.createElement('div');
+		  userInfoElement.classList.add('user-info');
+	  
+		  const usernameElement = document.createElement('span');
+		  usernameElement.classList.add('username');
+		  usernameElement.textContent = image.User.username;
+	  
+		  const dateElement = document.createElement('span');
+		  dateElement.classList.add('date');
+		  dateElement.textContent = formatDate(image.createdAt);
+	  
+		  userInfoElement.appendChild(usernameElement);
+		  userInfoElement.appendChild(dateElement);
+	  
+		  const imgElement = document.createElement('img');
+		  imgElement.src = image.url;
+		  imgElement.alt = image.description;
+	  
+		  const descriptionElement = document.createElement('p');
+		  descriptionElement.classList.add('description');
+		  descriptionElement.textContent = image.description;
+	  
+		  const actionsElement = document.createElement('div');
+		  actionsElement.classList.add('actions');
+	  
+		  const likeButton = document.createElement('img');
+		  likeButton.src = '/img/asset/like-off.png';
+		  likeButton.classList.add('like-button');
+		  likeButton.addEventListener('click', () => {
+			if (isAuthenticated) {
+			  likeImage(image.id, likeButton, likesElement);
+			} else {
+			  alert('You need to log in to like an image.');
+			}
+		  });
+	  
+		  const likesElement = document.createElement('span');
+		  likesElement.classList.add('like-count');
+		  likesElement.textContent = `${image.Likes.length} likes`;
+	  
+		  const commentsElement = document.createElement('div');
+		  commentsElement.classList.add('comments-container');
+		  commentsElement.dataset.imageId = image.id;
+		  image.Comments.forEach(comment => {
+			const commentElement = document.createElement('p');
+			commentElement.textContent = `${comment.User.username}: ${comment.text}`;
+			commentsElement.appendChild(commentElement);
+		  });
+	  
+		  const commentForm = document.createElement('form');
+		  const commentInput = document.createElement('input');
+		  commentInput.type = 'text';
+		  commentInput.placeholder = 'Add a comment...';
+		  const commentButton = document.createElement('button');
+		  commentButton.textContent = 'Post';
+		  commentForm.appendChild(commentInput);
+		  commentForm.appendChild(commentButton);
+		  commentForm.addEventListener('submit', (event) => {
+			event.preventDefault();
+			if (isAuthenticated) {
+			  commentImage(image.id, commentInput.value, commentsElement);
+			  commentInput.value = ''; // Clear the input field after submitting
+			} else {
+			  alert('You need to log in to comment.');
+			}
+		  });
+	  
+		  actionsElement.appendChild(likeButton);
+		  actionsElement.appendChild(likesElement);
+	  
+		  imageContainer.appendChild(userInfoElement);
+		  imageContainer.appendChild(imgElement);
+		  imageContainer.appendChild(descriptionElement);
+		  imageContainer.appendChild(actionsElement);
+		  imageContainer.appendChild(commentsElement);
+		  imageContainer.appendChild(commentForm);
+	  
+		  imageFeed.appendChild(imageContainer);
 		});
-  
-		const likesElement = document.createElement('span');
-		likesElement.classList.add('like-count');
-		likesElement.textContent = `${image.Likes.length} likes`;
-  
-		const commentsElement = document.createElement('div');
-		commentsElement.classList.add('comments-container');
-		commentsElement.dataset.imageId = image.id;
-		image.Comments.forEach(comment => {
-		  const commentElement = document.createElement('p');
-		  commentElement.textContent = `${comment.User.username}: ${comment.text}`;
-		  commentsElement.appendChild(commentElement);
-		});
-  
-		const commentForm = document.createElement('form');
-		const commentInput = document.createElement('input');
-		commentInput.type = 'text';
-		commentInput.placeholder = 'Add a comment...';
-		const commentButton = document.createElement('button');
-		commentButton.textContent = 'Post';
-		commentForm.appendChild(commentInput);
-		commentForm.appendChild(commentButton);
-		commentForm.addEventListener('submit', (event) => {
-		  event.preventDefault();
-		  if (isAuthenticated) {
-			commentImage(image.id, commentInput.value, commentsElement);
-			commentInput.value = ''; // Clear the input field after submitting
-		  } else {
-			alert('You need to log in to comment.');
-		  }
-		});
-  
-		actionsElement.appendChild(likeButton);
-		actionsElement.appendChild(likesElement);
-  
-		imageContainer.appendChild(userInfoElement);
-		imageContainer.appendChild(imgElement);
-		imageContainer.appendChild(descriptionElement);
-		imageContainer.appendChild(actionsElement);
-		imageContainer.appendChild(commentsElement);
-		imageContainer.appendChild(commentForm);
-  
-		imageFeed.appendChild(imageContainer);
-	  });
-	}
+	  }
+	  
+	  function formatDate(dateString) {
+		const date = new Date(dateString);
+		const now = new Date();
+		const diffMs = now - date;
+		const diffMins = Math.floor(diffMs / 60000);
+	  
+		if (diffMins < 60) {
+		  return `${diffMins}m ago`;
+		} else if (diffMins < 1440) {
+		  const diffHrs = Math.floor(diffMins / 60);
+		  return `${diffHrs}h ago`;
+		} else {
+		  const diffDays = Math.floor(diffMins / 1440);
+		  return `${diffDays}d ago`;
+		}
+	  }
+	  
   
 	function likeImage(imageId, likeButton, likesElement) {
 		fetch(`/images/${imageId}/like`, {
