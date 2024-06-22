@@ -248,8 +248,14 @@ body {
   transition: background-color 0.3s ease;
 }
 
-#post-button:hover, #discard-button:hover {
-  background-color: #2c8ce4;
+.webcam-container button:hover, 
+.upload-container button:hover,
+.button-container .capture-button:hover, 
+.button-container .create-gif-button:hover,
+#post-button:hover,
+#discard-button:hover {
+  background-color: rgb(20,180,236);
+  transform: scale(1.01);
 }
 
 .share-buttons {
