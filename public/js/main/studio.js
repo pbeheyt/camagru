@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	const discardButton = document.getElementById('discard-button');
 	const closePreview = document.getElementById('close-preview');
 	const loadingOverlay = document.getElementById('loading-overlay');
-	// const loadingSpinner = document.getElementById('loading-spinner');
 	const shareImgur = document.getElementById('share-imgur');
   
 	let selectedSuperposableImage = null;
@@ -97,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	  const deleteOverlay = document.createElement('div');
 	  deleteOverlay.classList.add('delete-overlay');
-	  deleteOverlay.innerHTML = '&#10060;'; // Red Cross
+	  deleteOverlay.innerHTML = '&#10060;';
   
 	  deleteOverlay.addEventListener('click', (event) => {
 		event.stopPropagation();

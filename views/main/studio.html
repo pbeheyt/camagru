@@ -17,13 +17,23 @@
 
   <div class="studio-container">
     <div class="main-section">
+      <div class="webcam-title-container">
+        <h3 class="section-title">Live preview</h3>
+      </div>
       <div class="webcam-container">
         <video id="webcam" autoplay playsinline></video>
         <div id="gif-notification" class="gif-notification" style="display: none;">Recording GIF...</div> <!-- GIF notification -->
+        <div class="button-container">
+          <button id="capture-button">Capture</button>
+          <button id="create-gif-button">Capture GIF</button>
+        </div>
       </div>
-      <div class="button-container">
-        <button id="capture-button">Capture</button>
-        <button id="create-gif-button">Capture GIF</button>
+      <div class="upload-title-container">
+        <h3 class="section-title">Upload a file</h3>
+      </div>
+      <div class="upload-container">
+        <input type="file" id="upload-input" accept="image/*">
+        <button id="upload-button">Upload</button>
       </div>
       <div id="preview-modal" class="modal">
         <div class="modal-content">
@@ -39,15 +49,21 @@
       </div>
     </div>
     <div class="side-section">
-      <input type="file" id="upload-input" accept="image/*">
-      <button id="upload-button">Upload</button>
-      <h3>Your Previous Pictures</h3>
-      <div id="thumbnails" class="thumbnails-container">
-        <!-- Thumbnails of previous pictures will be dynamically added here -->
+      <div class="thumbnails-title-container">
+        <h3 class="section-title">Your Previous Pictures</h3>
       </div>
-      <h3>Superposable Images</h3>
-      <div id="superposable-images" class="superposable-images-container">
-        <!-- List of superposable images will be dynamically added here -->
+      <div class="thumbnails-container">
+        <div id="thumbnails">
+          <!-- Thumbnails of previous pictures will be dynamically added here -->
+        </div>
+      </div>
+      <div class="superposable-title-container">
+        <h3 class="section-title">Superposable Images</h3>
+      </div>
+      <div class="superposable-images-container">
+        <div id="superposable-images">
+          <!-- List of superposable images will be dynamically added here -->
+        </div>
       </div>
     </div>
   </div>
