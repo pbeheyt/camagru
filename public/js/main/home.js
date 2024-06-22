@@ -49,20 +49,35 @@ document.addEventListener('DOMContentLoaded', function() {
 		imageContainer.classList.add('image-container');
 		imageContainer.dataset.imageId = image.id;
   
+		const userInfoElement = document.createElement('div');
+		userInfoElement.classList.add('user-info');
+		userInfoElement.textContent = `Posted by: ${image.User.username}`;
+  
 		const imgElement = document.createElement('img');
 		imgElement.src = image.url;
 		imgElement.alt = image.description;
   
-		const usernameElement = document.createElement('p');
-		usernameElement.textContent = `Posted by: ${image.User.username}`;
-  
 		const descriptionElement = document.createElement('p');
+		descriptionElement.classList.add('description');
 		descriptionElement.textContent = image.description;
   
-		const likesElement = document.createElement('p');
-		likesElement.textContent = `${image.Likes.length} likes`;
+		const actionsElement = document.createElement('div');
+		actionsElement.classList.add('actions');
+  
+		const likeButton = document.createElement('img');
+		likeButton.src = '/img/asset/like-off.png';
+		likeButton.classList.add('like-button');
+		likeButton.addEventListener('click', () => {
+		  if (isAuthenticated) {
+			likeImage(image.id, likeButton, likesElement);
+		  } else {
+			alert('You need to log in to like an image.');
+		  }
+		});
+  
+		const likesElement = document.createElement('span');
 		likesElement.classList.add('like-count');
-		likesElement.dataset.imageId = image.id;
+		likesElement.textContent = `${image.Likes.length} likes`;
   
 		const commentsElement = document.createElement('div');
 		commentsElement.classList.add('comments-container');
@@ -73,22 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		  commentsElement.appendChild(commentElement);
 		});
   
-		const likeButton = document.createElement('button');
-		likeButton.textContent = 'Like';
-		likeButton.addEventListener('click', () => {
-		  if (isAuthenticated) {
-			likeImage(image.id, likesElement);
-		  } else {
-			alert('You need to log in to like an image.');
-		  }
-		});
-  
 		const commentForm = document.createElement('form');
 		const commentInput = document.createElement('input');
 		commentInput.type = 'text';
-		commentInput.placeholder = 'Add a comment';
+		commentInput.placeholder = 'Add a comment...';
 		const commentButton = document.createElement('button');
-		commentButton.textContent = 'Comment';
+		commentButton.textContent = 'Post';
 		commentForm.appendChild(commentInput);
 		commentForm.appendChild(commentButton);
 		commentForm.addEventListener('submit', (event) => {
@@ -101,32 +106,39 @@ document.addEventListener('DOMContentLoaded', function() {
 		  }
 		});
   
+		actionsElement.appendChild(likeButton);
+		actionsElement.appendChild(likesElement);
+  
+		imageContainer.appendChild(userInfoElement);
 		imageContainer.appendChild(imgElement);
-		imageContainer.appendChild(usernameElement);
 		imageContainer.appendChild(descriptionElement);
-		imageContainer.appendChild(likesElement);
+		imageContainer.appendChild(actionsElement);
 		imageContainer.appendChild(commentsElement);
-		imageContainer.appendChild(likeButton);
 		imageContainer.appendChild(commentForm);
   
 		imageFeed.appendChild(imageContainer);
 	  });
 	}
   
-	function likeImage(imageId, likesElement) {
-	  fetch(`/images/${imageId}/like`, {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json'
-		}
-	  })
-	  .then(response => response.json())
-	  .then(data => {
-		if (data.success) {
-		  likesElement.textContent = `${data.likeCount} likes`;
-		}
-	  });
-	}
+	function likeImage(imageId, likeButton, likesElement) {
+		fetch(`/images/${imageId}/like`, {
+		  method: 'POST',
+		  headers: {
+			'Content-Type': 'application/json'
+		  }
+		})
+		.then(response => response.json())
+		.then(data => {
+		  if (data.success) {
+			likesElement.textContent = `${data.likeCount} likes`;
+			if (data.liked) {
+			  likeButton.src = '/img/asset/like-on.png';
+			} else {
+			  likeButton.src = '/img/asset/like-off.png';
+			}
+		  }
+		});
+	  }
   
 	function commentImage(imageId, text, commentsElement) {
 	  fetch(`/images/${imageId}/comment`, {
@@ -136,14 +148,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		},
 		body: JSON.stringify({ text })
 	  })
-	  .then(response => response.json())
-	  .then(data => {
-		if (data.success) {
-		  const commentElement = document.createElement('p');
-		  commentElement.textContent = `${data.comment.username}: ${data.comment.text}`;
-		  commentsElement.appendChild(commentElement);
-		}
-	  });
+		.then(response => response.json())
+		.then(data => {
+		  if (data.success) {
+			const commentElement = document.createElement('p');
+			commentElement.textContent = `${data.comment.username}: ${data.comment.text}`;
+			commentsElement.appendChild(commentElement);
+		  }
+		});
 	}
   
 	function handleScroll() {

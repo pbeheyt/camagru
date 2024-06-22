@@ -1,3 +1,5 @@
+/* home.css */
+
 .home-container {
     padding: 20px;
     text-align: center;
@@ -21,14 +23,51 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.user-info {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
 .image-container img {
     max-width: 100%;
     border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.description {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.like-button {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.like-button:hover {
+    transform: scale(1.1);
+}
+
+.like-button:hover {
+    content: url('/img/asset/like-on.png');
+}
+
+.like-count {
+    font-weight: bold;
+    margin-left: 10px;
 }
 
 .comments-container {
-    margin-top: 10px;
     text-align: left;
+    margin-top: 10px;
 }
 
 .comments-container p {
@@ -49,4 +88,31 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+form {
+    display: flex;
+    align-items: center;
+}
+
+form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+form button {
+    padding: 10px 20px;
+    background-color: #3786dd;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: rgb(20,180,236);
 }
