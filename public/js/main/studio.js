@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	  const deleteOverlay = document.createElement('div');
 	  deleteOverlay.classList.add('delete-overlay');
-	  deleteOverlay.innerHTML = '&#10060;';
+	  deleteOverlay.innerHTML = '<span style="color: white;">&#10006;</span>';
   
 	  deleteOverlay.addEventListener('click', (event) => {
 		event.stopPropagation();
