@@ -58,7 +58,7 @@ overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .webcam-container video {
-  max-width: 1200px;
+  max-width: 950px;
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 8px;
