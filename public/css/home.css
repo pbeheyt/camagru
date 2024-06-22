@@ -29,12 +29,10 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  color: #333;
 }
 
 .username {
   font-weight: bold;
-  color: #333;
   margin-left: 20px;
 }
 
@@ -98,7 +96,7 @@
 
 .title-stripe, .description-stripe {
   border: none;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid  rgb(20,180,236);;
   margin: 0 20px;
 }
 

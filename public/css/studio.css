@@ -24,19 +24,10 @@ body {
   flex: 1;
 }
 
-.title-container {
-  background-color: #3786dd;
-  color: white;
-  margin: 0; /* Remove default margin */
-  padding: 10px; /* Add padding for spacing inside the title container */
-  border-radius: 8px 8px 0 0; /* Rounded corners on the top only */
-}
-
 .webcam-title-container, .upload-title-container, .thumbnails-title-container, .superposable-title-container {
-  background-color: #3786dd;
+  background: linear-gradient(90deg, #3786dd, rgb(20,180,236));
   color: #fff;
   padding: 10px;
-  border-radius: 8px 8px 0 0;
   margin-bottom: 0;
 }
 
@@ -46,10 +37,8 @@ body {
 
 .webcam-container, .upload-container, .thumbnails-container, .superposable-images-container {
   background-color: #fff;
-  border-radius: 0 0 8px 8px; /* Rounded corners on the bottom only */
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(55, 134, 221, 255);
   margin-bottom: 40px;
 }
 
