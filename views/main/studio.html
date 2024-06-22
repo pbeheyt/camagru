@@ -21,8 +21,10 @@
         <h3 class="section-title">Live preview</h3>
       </div>
       <div class="webcam-container">
-        <video id="webcam" autoplay playsinline></video>
-        <div id="gif-notification" class="gif-notification" style="display: none;">Recording GIF...</div> <!-- GIF notification -->
+        <div class="video-wrapper">
+          <video id="webcam" autoplay playsinline></video>
+        </div>
+        <div id="gif-notification" class="gif-notification" style="display: none;">Recording GIF...</div>
         <div class="button-container">
           <button id="capture-button">Capture</button>
           <button id="create-gif-button">Capture GIF</button>

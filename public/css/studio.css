@@ -122,6 +122,10 @@ body {
   border: 2px solid #3786dd;
 }
 
+.video-wrapper {
+  position: relative;
+}
+
 .webcam-overlay {
   position: absolute;
   top: 0;

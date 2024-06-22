@@ -56,16 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
   
-	function overlaySuperposableImage(src) {
-	  const overlay = document.createElement('img');
-	  overlay.src = src;
-	  overlay.classList.add('webcam-overlay');
-	  const existingOverlay = document.querySelector('.webcam-overlay');
-	  if (existingOverlay) {
-		existingOverlay.remove();
-	  }
-	  webcamElement.parentElement.appendChild(overlay);
-	}
+  function overlaySuperposableImage(src) {
+    const overlay = document.createElement('img');
+    overlay.src = src;
+    overlay.classList.add('webcam-overlay');
+    const existingOverlay = document.querySelector('.webcam-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+    const videoWrapper = document.querySelector('.video-wrapper');
+    videoWrapper.appendChild(overlay);
+  }
+  
   
 	function loadThumbnails(userSpecific = false) {
 	  const url = userSpecific ? '/images?user=true' : '/images';
