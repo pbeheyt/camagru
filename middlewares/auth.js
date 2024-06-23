@@ -3,7 +3,7 @@ const path = require('path');
 
 exports.validateAccount = async (req, res, next) => {
     const token = req.url.split('/')[2]; // Extract token from URL
-
+    console.log(token);
     try {
         const user = await User.findOne({ where: { confirmationToken: token } });
 

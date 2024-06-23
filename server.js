@@ -19,6 +19,11 @@ const server = http.createServer((req, res) => {
     res.sendFile = (filePath) => sendFile(res, filePath);
     res.json = (data) => sendJson(res, data);
 
+    res.status = (statusCode) => {
+      res.statusCode = statusCode;
+      return res;
+    };
+
     router.route(req, res);
 });
 

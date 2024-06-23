@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const formData = new URLSearchParams(new FormData(this));
 
-	  fetch('/password-forget/', {
+	  fetch('/password-forget', {
 		method: 'POST',
 		body: formData,
 		headers: {

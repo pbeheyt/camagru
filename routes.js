@@ -75,8 +75,8 @@ module.exports = function(router) {
         res.json({ authenticated: req.session && req.session.userId ? true : false });
     });
 
-    router.add('USE', '*', (req, res) => {
-        res.statusCode = 404;
-        res.sendFile(path.join(__dirname, 'views', 'main', '404.html'));
-    });
+    // router.add('USE', '*', (req, res) => {
+    //     res.statusCode = 404;
+    //     res.sendFile(path.join(__dirname, 'views', 'main', '404.html'));
+    // });
 };
