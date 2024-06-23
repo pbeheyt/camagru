@@ -150,6 +150,14 @@
   transform: scale(1.1);
 }
 
+.no-images-message {
+  font-weight: bold;
+  color: #4a4a4a;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+
 .loading-spinner {
 	display: none;
 	margin: 20px auto;

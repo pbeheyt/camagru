@@ -16,32 +16,44 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	function fetchImages(page = 1) {
-		if (page > totalPages || isLoading) {
-			return;
-		}
-		isLoading = true;
-		loadingSpinner.style.display = 'block';
+        if (page > totalPages || isLoading) {
+            return;
+        }
+        isLoading = true;
+        loadingSpinner.style.display = 'block';
 
-		setTimeout(() => {
-			fetch(`/images?page=${page}`)
-				.then(response => response.json())
-				.then(data => {
-					loadingSpinner.style.display = 'none';
-					isLoading = false;
+        setTimeout(() => {
+            fetch(`/images?page=${page}`)
+                .then(response => response.json())
+                .then(data => {
+                    loadingSpinner.style.display = 'none';
+                    isLoading = false;
 
-					if (data.success) {
-						appendImages(data.images);
-						currentPage = data.currentPage;
-						totalPages = data.totalPages; // Update totalPages from the response
-					}
-				})
-				.catch(error => {
-					loadingSpinner.style.display = 'none';
-					isLoading = false;
-					console.error('Error fetching images:', error);
-				});
-		}, 1000); // 1000ms delay for loading animation
-	}
+                    if (data.success) {
+                        if (data.images.length === 0 && currentPage === 1) {
+                            displayNoImagesMessage();
+                        } else {
+                            appendImages(data.images);
+                        }
+                        currentPage = data.currentPage;
+                        totalPages = data.totalPages; // Update totalPages from the response
+                    }
+                })
+                .catch(error => {
+                    loadingSpinner.style.display = 'none';
+                    isLoading = false;
+                    console.error('Error fetching images:', error);
+                });
+        }, 1000); // 1000ms delay for loading animation
+    }
+		
+    function displayNoImagesMessage() {
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('no-images-message');
+        messageContainer.textContent = 'Nothing to show here for the moment...';
+        imageFeed.appendChild(messageContainer);
+				console.log('test');
+    }
 
 	function appendImages(images) {
 		images.forEach(image => {
