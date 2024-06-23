@@ -11,6 +11,12 @@ const studioController = require('./controllers/main/studio');
 const imgurController = require('./controllers/social/imgurController');
 
 module.exports = function(router) {
+      // Serve the favicon
+      router.add('GET', '/favicon.ico', (req, res) => {
+        const filePath = path.join(__dirname, 'public', 'favicon.ico');
+        res.sendFile(filePath);
+    });
+
     router.add('GET', '/', (req, res) => {
         const filePath = res.locals && res.locals.isAuthenticated
             ? path.join(__dirname, 'views', 'main', 'home.html')
