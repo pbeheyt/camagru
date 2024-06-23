@@ -1,20 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 const { Image } = require('../../models');
-const multer = require('multer');
 const { createCanvas, loadImage } = require('canvas');
 const GIFEncoder = require('gifencoder');
-
-// Set up multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Append the file extension
-  }
-});
-const upload = multer({ storage });
+const upload = require('../../middlewares/upload');
 
 exports.captureImage = async (req, res) => {
 	try {
@@ -49,41 +38,53 @@ exports.captureImage = async (req, res) => {
 	  res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
   };
-  
-  exports.uploadImage = [
-	upload.single('image'),
-	async (req, res) => {
-	  try {
-		const superposableImage = req.body.superposableImage;
-		const filename = Date.now() + '-uploaded.png';
-		const filePath = path.join(__dirname, '../../uploads/', filename);
-  
-		const canvas = createCanvas(640, 480); // Adjust the canvas size as needed
-		const context = canvas.getContext('2d');
-  
-		// Draw the uploaded image
-		const img = await loadImage(req.file.path);
-		context.drawImage(img, 0, 0, canvas.width, canvas.height);
-  
-		// Draw the superposable image
-		if (superposableImage) {
-		  const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
-		  context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
-		}
-  
-		// Save the final image
-		const out = fs.createWriteStream(filePath);
-		const stream = canvas.createPNGStream();
-		stream.pipe(out);
-		out.on('finish', () => {
-		  res.json({ success: true, imageUrl: `/uploads/${filename}` });
-		});
-	  } catch (error) {
-		console.error('Error uploading image:', error);
-		res.status(500).json({ success: false, error: 'Internal Server Error' });
-	  }
-	}
-  ];
+	
+
+	exports.uploadImage = [
+			upload.single('image'), // Middleware to handle file upload
+			async (req, res) => {
+        try {
+            const superposableImage = req.body.superposableImage;
+            const filePath = req.file.path;
+            console.log('File path for saving image:', filePath);
+
+            const canvas = createCanvas(640, 480);
+            const context = canvas.getContext('2d');
+
+            // Draw the uploaded image
+            try {
+                const img = await loadImage(filePath);
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            } catch (imgError) {
+                console.error('Error loading uploaded image:', imgError);
+                return res.status(500).json({ success: false, error: 'Failed to load uploaded image' });
+            }
+
+            // Draw the superposable image
+            if (superposableImage) {
+                try {
+                    const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+                    context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+                } catch (overlayError) {
+                    console.error('Error loading superposable image:', overlayError);
+                    return res.status(500).json({ success: false, error: 'Failed to load superposable image' });
+                }
+            }
+
+            // Save the final image
+            const filename = Date.now() + '-processed.png';
+            const finalPath = path.join(__dirname, '../../uploads/', filename);
+            const out = fs.createWriteStream(finalPath);
+            const stream = canvas.createPNGStream();
+            stream.pipe(out);
+            out.on('finish', () => {
+                res.json({ success: true, imageUrl: `/uploads/${filename}` });
+            });
+        } catch (error) {
+            res.status(500).json({ success: false, error: 'Internal Server Error' });
+        }
+    }
+	];
   
   exports.postImage = async (req, res) => {
 	try {
