@@ -4,6 +4,7 @@ const Router = require('./Router');
 const routes = require('./routes');
 const { sessionMiddleware } = require('./middlewares/session');
 const { sessionToLocals } = require('./middlewares/sessionToLocals');
+const { parseCookies } = require('./middlewares/parseCookies');
 const { parseJson } = require('./middlewares/parseJson');
 const { parseUrlencoded} = require('./middlewares/parseUrlencoded');
 const { serveStatic } = require('./middlewares/serveStatic');
@@ -27,6 +28,7 @@ const server = http.createServer((req, res) => {
     router.route(req, res);
 });
 
+router.use(parseCookies);
 router.use(parseJson);
 router.use(parseUrlencoded);
 router.use(serveStatic);

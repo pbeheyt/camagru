@@ -76,6 +76,7 @@ exports.authenticateUser = (req, res, next) => {
 
 exports.isAuthenticated = (req, res, next) => {
   res.locals = res.locals || {}; // Ensure res.locals is initialized
+  console.log('req session', req.session, req.session.userId);
   res.locals.isAuthenticated = req.session && req.session.userId ? true : false;
   next();
 };

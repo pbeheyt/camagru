@@ -18,6 +18,7 @@ module.exports = function(router) {
     });
 
     router.add('GET', '/', (req, res) => {
+        console.log('log res',res.locals, res.locals.isAuthenticated)
         const filePath = res.locals && res.locals.isAuthenticated
             ? path.join(__dirname, 'views', 'main', 'home.html')
             : path.join(__dirname, 'views', 'main', 'home-public.html');

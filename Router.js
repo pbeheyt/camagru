@@ -52,19 +52,19 @@ class Router {
         };
 
         try {
-            console.log(`Routing request: ${req.method} ${req.url}`);
-            console.log(`Parsed pathname: ${req.pathname}`);
-            console.log(`Parsed query: ${JSON.stringify(req.query)}`);
+            // console.log(`Routing request: ${req.method} ${req.url}`);
+            // console.log(`Parsed pathname: ${req.pathname}`);
+            // console.log(`Parsed query: ${JSON.stringify(req.query)}`);
 
-            console.log('Running middlewares...');
+            // console.log('Running middlewares...');
             for (const middleware of this.middlewares) {
-                console.log(`Running middleware: ${middleware.name || 'anonymous'}`);
+                // console.log(`Running middleware: ${middleware.name || 'anonymous'}`);
                 await runMiddleware(middleware, req, res);
             }
 
-            console.log('Available routes:', this.routes);
+            // console.log('Available routes:', this.routes);
             const route = this.routes.find(r => r.method === req.method && r.path.test(req.pathname));
-            console.log('Matched route:', route);
+            // console.log('Matched route:', route);
 
             if (route) {
                 // Extract parameters and add them to the req object
@@ -74,11 +74,11 @@ class Router {
                     req.params[paramName] = matches[index + 1];
                 });
 
-                console.log('Extracted params:', req.params);
+                // console.log('Extracted params:', req.params);
 
-                console.log('Running route handlers...');
+                // console.log('Running route handlers...');
                 for (const handler of route.handlers) {
-                    console.log(`Running handler: ${handler.name || 'anonymous'}`);
+                    // console.log(`Running handler: ${handler.name || 'anonymous'}`);
                     await runMiddleware(handler, req, res);
                 }
             } else {

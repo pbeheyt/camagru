@@ -4,6 +4,7 @@ const { generateToken, getTokenExpiration } = require('./token');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('./mailer');
 const { sendFile, sendJson } = require('./responseMethods');
 const escapeHtml = require('./security');
+const generateUUID = require('./uuid');
 
 module.exports = {
   authenticateUser,
@@ -15,5 +16,6 @@ module.exports = {
   sendPasswordResetEmail,
   escapeHtml,
   sendFile,
-  sendJson
+  sendJson,
+  generateUUID
 };
