@@ -19,13 +19,11 @@ module.exports = function(router) {
 
     // Serve static files from the uploads directory
     router.add('GET', /^\/uploads\/(.+)$/, (req, res) => {
-      console.log('Serving static file from uploads:', req.params[0]);
       const filePath = path.join(__dirname, 'uploads', req.params[0]);
       res.sendFile(filePath);
     });
 
     router.add('GET', '/', (req, res) => {
-        console.log('log res',res.locals, res.locals.isAuthenticated)
         const filePath = res.locals && res.locals.isAuthenticated
             ? path.join(__dirname, 'views', 'main', 'home.html')
             : path.join(__dirname, 'views', 'main', 'home-public.html');

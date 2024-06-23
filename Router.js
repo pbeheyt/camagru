@@ -15,8 +15,11 @@ class Router {
     add(method, routePath, ...handlers) {
         const paramNames = [];
         let pathRegex;
+        let isRegex = false;
+
         if (routePath instanceof RegExp) {
             pathRegex = routePath;
+            isRegex = true;
         } else {
             pathRegex = routePath.replace(/\/:(\w+)/g, (_, paramName) => {
                 paramNames.push(paramName);
@@ -32,19 +35,19 @@ class Router {
             pathRegex = new RegExp(`^${pathRegex}$`);
         }
 
-        this.routes.push({ method, path: pathRegex, paramNames, handlers });
+        this.routes.push({ method, path: pathRegex, paramNames, handlers, isRegex });
     }
 
     async route(req, res) {
         const parsedUrl = url.parse(req.url, true);
         req.pathname = parsedUrl.pathname.replace(/\/+$/, '');
         req.query = parsedUrl.query;
-    
+
         res.redirect = (location) => {
             res.writeHead(302, { 'Location': location });
             res.end();
         };
-    
+
         const runMiddleware = async (middleware, req, res) => {
             return new Promise((resolve, reject) => {
                 middleware(req, res, (err) => {
@@ -53,24 +56,27 @@ class Router {
                 });
             });
         };
-    
+
         try {
             for (const middleware of this.middlewares) {
                 await runMiddleware(middleware, req, res);
             }
-    
+
             const route = this.routes.find(r => r.method === req.method && r.path.test(req.pathname));
-    
+
             if (route) {
                 const matches = req.pathname.match(route.path);
                 req.params = {};
-                route.paramNames.forEach((paramName, index) => {
-                    req.params[paramName] = matches ? matches[index + 1] : null;
-                });
-    
-                console.log('Matched route:', route);
-                console.log('Extracted params:', req.params);
-    
+
+                if (route.isRegex) {
+                    // For regex routes, capture the entire match as a parameter
+                    req.params[0] = matches ? matches[1] : null;
+                } else {
+                    route.paramNames.forEach((paramName, index) => {
+                        req.params[paramName] = matches ? matches[index + 1] : null;
+                    });
+                }
+
                 for (const handler of route.handlers) {
                     await runMiddleware(handler, req, res);
                 }
