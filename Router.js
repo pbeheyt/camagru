@@ -13,35 +13,38 @@ class Router {
     }
 
     add(method, routePath, ...handlers) {
-        // Convert the path to a regex and store the parameter names
         const paramNames = [];
-        const pathRegex = routePath.replace(/\/:(\w+)/g, (_, paramName) => {
-            paramNames.push(paramName);
-            if (paramName === 'token') {
-                return '/([a-fA-F0-9]{40})'; // Regex pattern for token
-            }
-            if (paramName === 'id') {
-                return '/(\\d+)'; // Regex pattern for integer ID
-            }
-            return '/([^/]+)'; // Default pattern for other parameters
-        }).replace(/\/$/, ''); // Remove trailing slashes
+        let pathRegex;
+        if (routePath instanceof RegExp) {
+            pathRegex = routePath;
+        } else {
+            pathRegex = routePath.replace(/\/:(\w+)/g, (_, paramName) => {
+                paramNames.push(paramName);
+                if (paramName === 'token') {
+                    return '/([a-fA-F0-9]{40})';
+                }
+                if (paramName === 'id') {
+                    return '/(\\d+)';
+                }
+                return '/([^/]+)';
+            }).replace(/\/$/, '');
 
-        const regex = new RegExp(`^${pathRegex}$`);
+            pathRegex = new RegExp(`^${pathRegex}$`);
+        }
 
-        this.routes.push({ method, path: regex, paramNames, handlers });
+        this.routes.push({ method, path: pathRegex, paramNames, handlers });
     }
 
     async route(req, res) {
         const parsedUrl = url.parse(req.url, true);
-        req.pathname = parsedUrl.pathname.replace(/\/+$/, ''); // Normalize request path
+        req.pathname = parsedUrl.pathname.replace(/\/+$/, '');
         req.query = parsedUrl.query;
-
-        // Add custom redirect method
+    
         res.redirect = (location) => {
             res.writeHead(302, { 'Location': location });
             res.end();
         };
-
+    
         const runMiddleware = async (middleware, req, res) => {
             return new Promise((resolve, reject) => {
                 middleware(req, res, (err) => {
@@ -50,35 +53,25 @@ class Router {
                 });
             });
         };
-
+    
         try {
-            // console.log(`Routing request: ${req.method} ${req.url}`);
-            // console.log(`Parsed pathname: ${req.pathname}`);
-            // console.log(`Parsed query: ${JSON.stringify(req.query)}`);
-
-            // console.log('Running middlewares...');
             for (const middleware of this.middlewares) {
-                // console.log(`Running middleware: ${middleware.name || 'anonymous'}`);
                 await runMiddleware(middleware, req, res);
             }
-
-            // console.log('Available routes:', this.routes);
+    
             const route = this.routes.find(r => r.method === req.method && r.path.test(req.pathname));
-            // console.log('Matched route:', route);
-
+    
             if (route) {
-                // Extract parameters and add them to the req object
                 const matches = req.pathname.match(route.path);
                 req.params = {};
                 route.paramNames.forEach((paramName, index) => {
-                    req.params[paramName] = matches[index + 1];
+                    req.params[paramName] = matches ? matches[index + 1] : null;
                 });
-
-                // console.log('Extracted params:', req.params);
-
-                // console.log('Running route handlers...');
+    
+                console.log('Matched route:', route);
+                console.log('Extracted params:', req.params);
+    
                 for (const handler of route.handlers) {
-                    // console.log(`Running handler: ${handler.name || 'anonymous'}`);
                     await runMiddleware(handler, req, res);
                 }
             } else {

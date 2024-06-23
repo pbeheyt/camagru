@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function () {
         messageContainer.classList.add('no-images-message');
         messageContainer.textContent = 'Nothing to show here for the moment...';
         imageFeed.appendChild(messageContainer);
-				console.log('test');
     }
 
 	function appendImages(images) {
@@ -204,9 +203,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	function likeImage(imageId, likeButton, likesElement) {
 		fetch(`/images/${imageId}/like`, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			}
 		})
 			.then(response => response.json())
 			.then(data => {

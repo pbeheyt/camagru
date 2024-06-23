@@ -11,10 +11,17 @@ const studioController = require('./controllers/main/studio');
 const imgurController = require('./controllers/social/imgurController');
 
 module.exports = function(router) {
-      // Serve the favicon
-      router.add('GET', '/favicon.ico', (req, res) => {
-        const filePath = path.join(__dirname, 'public', 'favicon.ico');
-        res.sendFile(filePath);
+    // Serve the favicon
+    router.add('GET', '/favicon.ico', (req, res) => {
+      const filePath = path.join(__dirname, 'public', 'favicon.ico');
+      res.sendFile(filePath);
+    });
+
+    // Serve static files from the uploads directory
+    router.add('GET', /^\/uploads\/(.+)$/, (req, res) => {
+      console.log('Serving static file from uploads:', req.params[0]);
+      const filePath = path.join(__dirname, 'uploads', req.params[0]);
+      res.sendFile(filePath);
     });
 
     router.add('GET', '/', (req, res) => {
