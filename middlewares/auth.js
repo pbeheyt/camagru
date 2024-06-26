@@ -1,69 +1,74 @@
-const User = require('../models/User');
+const { client } = require('../database/connect');
 const path = require('path');
 
 exports.validateAccount = async (req, res, next) => {
     const token = req.url.split('/')[2]; // Extract token from URL
-    console.log(token);
+  
     try {
-        const user = await User.findOne({ where: { confirmationToken: token } });
-
-        if (!user) {
-            res.statusCode = 302;
-            res.setHeader('Location', '/login?error=' + encodeURIComponent('User not found'));
-            res.end();
-            return;
-        }
-
-        if (Date.now() > user.tokenExpiration) {
-            res.statusCode = 302;
-            res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
-            res.end();
-            return;
-        }
-
-        user.isConfirmed = true;
-        user.confirmationToken = null;
-        user.tokenExpiration = null;
-        await user.save();
-
-        next();
-    } catch (error) {
-        console.error('Error confirming user:', error);
-        res.statusCode = 500;
-        res.setHeader('Location', '/login?error=' + encodeURIComponent('Internal Server Error'));
-        res.end();
-    }
-};
-
-exports.validateResetToken = async (req, res, next) => {
-  const token = req.url.split('/')[2]; // Extract token from URL
-
-  try {
-      const user = await User.findOne({ where: { passwordResetToken: token } });
-
+      const query = 'SELECT * FROM users WHERE "confirmationToken" = $1';
+      const result = await client.query(query, [token]);
+      const user = result.rows[0];
+  
       if (!user) {
-          res.statusCode = 302;
-          res.setHeader('Location', '/login?error=' + encodeURIComponent('Invalid token'));
-          res.end();
-          return;
+        res.statusCode = 302;
+        res.setHeader('Location', '/login?error=' + encodeURIComponent('User not found'));
+        res.end();
+        return;
       }
-
-      const tokenExpiration = user.getDataValue('passwordResetTokenExpiration');
-      if (Date.now() > tokenExpiration) {
-          res.statusCode = 302;
-          res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
-          res.end();
-          return;
+      console.log(user.confirmationTokenExpires);
+      if (Date.now() > new Date(user.confirmationTokenExpires)) {
+        res.statusCode = 302;
+        res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
+        res.end();
+        return;
       }
-
+  
+      const updateQuery = `
+        UPDATE users
+        SET "isConfirmed" = true, "confirmationToken" = null, "confirmationTokenExpires" = null
+        WHERE id = $1
+      `;
+      await client.query(updateQuery, [user.id]);
+  
       next();
-  } catch (error) {
+    } catch (error) {
+      console.error('Error confirming user:', error);
+      res.statusCode = 500;
+      res.setHeader('Location', '/login?error=' + encodeURIComponent('Internal Server Error'));
+      res.end();
+    }
+  };
+
+  exports.validateResetToken = async (req, res, next) => {
+    const token = req.url.split('/')[2]; // Extract token from URL
+  
+    try {
+      const query = 'SELECT * FROM users WHERE "passwordResetToken" = $1';
+      const result = await client.query(query, [token]);
+      const user = result.rows[0];
+  
+      if (!user) {
+        res.statusCode = 302;
+        res.setHeader('Location', '/login?error=' + encodeURIComponent('Invalid token'));
+        res.end();
+        return;
+      }
+      
+      if (Date.now() > new Date(user.passwordResetExpires)) {
+        res.statusCode = 302;
+        res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
+        res.end();
+        return;
+      }
+  
+      next();
+    } catch (error) {
       console.error('Error validating reset token:', error);
       res.statusCode = 500;
       res.setHeader('Location', '/login?error=' + encodeURIComponent('Internal Server Error'));
       res.end();
-  }
-};
+    }
+  };
 
 exports.authenticateUser = (req, res, next) => {
   if (req.session.userId) {

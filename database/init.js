@@ -1,9 +1,20 @@
-const { Sequelize } = require('sequelize');
-const config = require('../config/config')[process.env.NODE_ENV || 'development'];
+const { createUserTable } = require('../models/User');
+const { createImageTable } = require('../models/Image');
+const { createCommentTable } = require('../models/Comment');
+const { createLikeTable } = require('../models/Like');
 
-const sequelize = new Sequelize(config.database, config.username, config.password, {
-  host: config.host,
-  dialect: config.dialect
-});
+const initializeDatabase = async () => {
+  try {
+    await createUserTable();
+    await createImageTable();
+    await createCommentTable();
+    await createLikeTable();
+    console.log('Database & tables created!');
+  } catch (error) {
+    console.error('Error creating tables:', error);
+  }
+};
 
-module.exports = sequelize;
+module.exports = {
+  initializeDatabase,
+};

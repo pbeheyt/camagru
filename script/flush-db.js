@@ -1,22 +1,34 @@
-const sequelize = require('../database/init');
-const User = require('../models/User');
-const Image = require('../models/Image');
-const Comment = require('../models/Comment');
-const Like = require('../models/Like');
+const { client, connectToDatabase } = require('../database/connect');
 
-async function flush() {
-	// Iterate over the models and delete all the records from each table
-	for (const model of [Like, Comment, Image, User]) {
-	  await model.destroy({
-		where: {}
-	  });
-	}
-  
-	console.log('Database flushed successfully!');
+const flushDatabase = async () => {
+  const tables = ['likes', 'comments', 'images', 'users'];
+  try {
+    console.log('Attempting to flush database...');
+    await connectToDatabase(); // Ensure connection
+
+    // Disable foreign key checks
+    await client.query('SET session_replication_role = replica;');
+
+    for (const table of tables) {
+      console.log(`Dropping table ${table}...`);
+      await client.query(`DROP TABLE IF EXISTS ${table} CASCADE;`);
+      console.log(`Table ${table} dropped.`);
+    }
+
+    // Enable foreign key checks
+    await client.query('SET session_replication_role = origin;');
+
+    console.log('Database flushed successfully!');
+  } catch (error) {
+    console.error('Error flushing database:', error);
+  } finally {
+    try {
+      await client.end(); // Close the database connection
+      console.log('Database connection closed.');
+    } catch (closeError) {
+      console.error('Error closing the database connection:', closeError);
+    }
   }
-  
-flush()
-	.catch((err) => {
-	  console.error('Error flushing database:', err);
-	  process.exitCode = 1;
-});
+};
+
+flushDatabase();

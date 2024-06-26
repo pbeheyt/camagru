@@ -1,5 +1,4 @@
 const http = require('http');
-const sequelize = require('./database/init');
 const Router = require('./Router');
 const routes = require('./routes');
 const { sessionMiddleware } = require('./middlewares/session');
@@ -9,6 +8,8 @@ const { parseJson } = require('./middlewares/parseJson');
 const { parseUrlencoded} = require('./middlewares/parseUrlencoded');
 const { serveStatic } = require('./middlewares/serveStatic');
 const { sendFile, sendJson } = require('./utils/responseMethods');
+const { connectToDatabase } = require('./database/connect');
+const { initializeDatabase } = require('./database/init');
 
 const router = new Router();
 
@@ -37,30 +38,18 @@ router.use(sessionToLocals);
 
 routes(router);
 
-const forceSync = process.env.FORCE_SYNC === 'true';
+const PORT = process.env.PORT || 3000;
 
-sequelize
-    .authenticate()
-    .then(() => {
-        console.log('Database connection has been established successfully.');
-        const { User, Image, Comment, Like } = require('./models');
-        User.associate({ Image, Comment, Like });
-        Image.associate({ User, Comment, Like });
-        Comment.associate({ User, Image });
-        Like.associate({ User, Image });
-        return sequelize.sync({ force: forceSync });
-    })
-    .then(() => {
-        if (forceSync) {
-            console.log('Database & tables created with force sync!');
-        } else {
-            console.log('Database synchronized without force sync.');
-        }
-        const PORT = process.env.PORT || 3000;
-        server.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error('Unable to connect to the database:', err);
-    });
+const startServer = async () => {
+  try {
+      await connectToDatabase();
+      await initializeDatabase();
+      server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+      });
+  } catch (error) {
+      console.error('Unable to start the server:', error);
+  }
+};
+
+startServer();

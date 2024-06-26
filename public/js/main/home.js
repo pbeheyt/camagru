@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function appendImages(images) {
 		images.forEach(image => {
+			console.log(image);
 		  const imageContainer = document.createElement('div');
 		  imageContainer.classList.add('image-container');
 		  imageContainer.dataset.imageId = image.id;

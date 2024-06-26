@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
-const { Image } = require('../../models');
 const { createCanvas, loadImage } = require('canvas');
 const GIFEncoder = require('gifencoder');
 const upload = require('../../middlewares/upload');
+const { client } = require('../../database/connect');
 
 exports.captureImage = async (req, res) => {
 	try {
@@ -40,108 +40,112 @@ exports.captureImage = async (req, res) => {
   };
 	
 
-	exports.uploadImage = [
-			upload.single('image'), // Middleware to handle file upload
-			async (req, res) => {
-        try {
-            const superposableImage = req.body.superposableImage;
-            const filePath = req.file.path;
-            console.log('File path for saving image:', filePath);
+exports.uploadImage = [
+		upload.single('image'), // Middleware to handle file upload
+		async (req, res) => {
+			try {
+					const superposableImage = req.body.superposableImage;
+					const filePath = req.file.path;
+					console.log('File path for saving image:', filePath);
 
-            const canvas = createCanvas(640, 480);
-            const context = canvas.getContext('2d');
+					const canvas = createCanvas(640, 480);
+					const context = canvas.getContext('2d');
 
-            // Draw the uploaded image
-            try {
-                const img = await loadImage(filePath);
-                context.drawImage(img, 0, 0, canvas.width, canvas.height);
-            } catch (imgError) {
-                console.error('Error loading uploaded image:', imgError);
-                return res.status(500).json({ success: false, error: 'Failed to load uploaded image' });
-            }
+					// Draw the uploaded image
+					try {
+							const img = await loadImage(filePath);
+							context.drawImage(img, 0, 0, canvas.width, canvas.height);
+					} catch (imgError) {
+							console.error('Error loading uploaded image:', imgError);
+							return res.status(500).json({ success: false, error: 'Failed to load uploaded image' });
+					}
 
-            // Draw the superposable image
-            if (superposableImage) {
-                try {
-                    const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
-                    context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
-                } catch (overlayError) {
-                    console.error('Error loading superposable image:', overlayError);
-                    return res.status(500).json({ success: false, error: 'Failed to load superposable image' });
-                }
-            }
+					// Draw the superposable image
+					if (superposableImage) {
+							try {
+									const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+									context.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+							} catch (overlayError) {
+									console.error('Error loading superposable image:', overlayError);
+									return res.status(500).json({ success: false, error: 'Failed to load superposable image' });
+							}
+					}
 
-            // Save the final image
-            const filename = Date.now() + '-processed.png';
-            const finalPath = path.join(__dirname, '../../uploads/', filename);
-            const out = fs.createWriteStream(finalPath);
-            const stream = canvas.createPNGStream();
-            stream.pipe(out);
-            out.on('finish', () => {
-                res.json({ success: true, imageUrl: `/uploads/${filename}` });
-            });
-        } catch (error) {
-            res.status(500).json({ success: false, error: 'Internal Server Error' });
-        }
-    }
-	];
-  
-  exports.postImage = async (req, res) => {
-	try {
-	  const imageUrl = req.body.imageUrl;
-	  const image = await Image.create({
-		url: imageUrl,
-		userId: req.session.userId,
-		description: 'Posted image'
-	  });
-	  res.json({ success: true, image });
-	} catch (error) {
-	  console.error('Error posting image:', error);
-	  res.status(500).json({ success: false, error: 'Internal Server Error' });
-	}
-  };
-  
-  exports.deleteImage = async (req, res) => {
-	try {
-	  const image = await Image.findOne({ where: { id: req.params.id, userId: req.session.userId } });
-	  if (!image) {
-		return res.status(404).json({ success: false, error: 'Image not found' });
-	  }
-  
-	  // Get the file path
-	  const filePath = path.join(__dirname, '../../uploads', path.basename(image.url));
-  
-	  // Check if the file exists before attempting to delete it
-	  fs.access(filePath, fs.constants.F_OK, async (err) => {
-		if (err) {
-		  if (err.code === 'ENOENT') {
-			console.warn('File does not exist:', filePath);
-			// File does not exist, but still delete the record from the database
-			await image.destroy();
-			return res.json({ success: true, message: 'Image record deleted, but file was not found' });
-		  } else {
-			console.error('Error accessing file:', err);
-			return res.status(500).json({ success: false, error: 'Error accessing image file' });
-		  }
-		} else {
-		  // Delete the image file from the file system
-		  fs.unlink(filePath, async (err) => {
-			if (err) {
-			  console.error('Error deleting image file:', err);
-			  return res.status(500).json({ success: false, error: 'Error deleting image file' });
+					// Save the final image
+					const filename = Date.now() + '-processed.png';
+					const finalPath = path.join(__dirname, '../../uploads/', filename);
+					const out = fs.createWriteStream(finalPath);
+					const stream = canvas.createPNGStream();
+					stream.pipe(out);
+					out.on('finish', () => {
+							res.json({ success: true, imageUrl: `/uploads/${filename}` });
+					});
+			} catch (error) {
+					res.status(500).json({ success: false, error: 'Internal Server Error' });
 			}
-  
-			// Delete the record from the database
-			await image.destroy();
-			res.json({ success: true });
-		  });
-		}
-	  });
-	} catch (error) {
-	  console.error('Error deleting image:', error);
-	  res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
-  };
+];
+  
+exports.postImage = async (req, res) => {
+  try {
+    const imageUrl = req.body.imageUrl;
+    const userId = req.session.userId;
+
+    const insertQuery = `
+      INSERT INTO images (url, "userId", description)
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `;
+    const result = await client.query(insertQuery, [imageUrl, userId, 'Posted image']);
+    const image = result.rows[0];
+
+    res.json({ success: true, image });
+  } catch (error) {
+    console.error('Error posting image:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+  
+exports.deleteImage = async (req, res) => {
+  try {
+    const query = `
+      SELECT * FROM images
+      WHERE id = $1 AND "userId" = $2;
+    `;
+    const result = await client.query(query, [req.params.id, req.session.userId]);
+    const image = result.rows[0];
+
+    if (!image) {
+      return res.status(404).json({ success: false, error: 'Image not found' });
+    }
+
+    const filePath = path.join(__dirname, '../../uploads', path.basename(image.url));
+    fs.access(filePath, fs.constants.F_OK, async (err) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          await client.query('DELETE FROM images WHERE id = $1', [image.id]);
+          return res.json({ success: true, message: 'Image record deleted, but file was not found' });
+        } else {
+          console.error('Error accessing file:', err);
+          return res.status(500).json({ success: false, error: 'Error accessing image file' });
+        }
+      } else {
+        fs.unlink(filePath, async (err) => {
+          if (err) {
+            console.error('Error deleting image file:', err);
+            return res.status(500).json({ success: false, error: 'Error deleting image file' });
+          }
+
+          await client.query('DELETE FROM images WHERE id = $1', [image.id]);
+          res.json({ success: true });
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
 
 exports.getSuperposableImages = (req, res) => {
   const directoryPath = path.join(__dirname, '../../public/img/superposable');
@@ -190,4 +194,4 @@ exports.createAnimatedGIF = async (req, res) => {
 	  console.error('Error creating animated GIF:', error);
 	  res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
-  };
+};

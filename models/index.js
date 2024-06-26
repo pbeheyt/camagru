@@ -1,5 +1,3 @@
-// const { Sequelize } = require('sequelize');
-// const sequelize = require('../database/init');
 const User = require('./User');
 const Image = require('./Image');
 const Comment = require('./Comment');
@@ -12,13 +10,10 @@ const models = {
 	Like
 };
 
-Object.values(models).forEach(model => {
-  if (model.associate) {
-    model.associate(models);
-  }
-});
-
-// models.sequelize = sequelize;
-// models.Sequelize = Sequelize;
+// Object.values(models).forEach(model => {
+//   if (model.associate) {
+//     model.associate(models);
+//   }
+// });
 
 module.exports = models;

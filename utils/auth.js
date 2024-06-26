@@ -1,13 +1,16 @@
 const bcrypt = require('bcrypt');
-const User = require('../models/User');
+const { client } = require('../database/connect');
 
 async function authenticateUser(username, password) {
-  const user = await User.findOne({ where: { username } });
-  if (!user) {
-    return false;
+  const query = 'SELECT * FROM users WHERE username = $1';
+  const result = await client.query(query, [username]);
+  const user = result.rows[0];
+
+  if (user && await bcrypt.compare(password, user.password)) {
+    return user;
+  } else {
+    return null;
   }
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  return isPasswordValid ? user : false;
-}
+};
 
 module.exports = authenticateUser;

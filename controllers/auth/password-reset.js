@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { isValidPassword } = require('../../utils');
-const User = require('../../models/User');
+const { client } = require('../../database/connect');
 
 exports.resetPassword = async (req, res) => {
   const { password, 'confirm-password': confirmPassword } = req.body;
@@ -15,18 +15,22 @@ exports.resetPassword = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ where: { passwordResetToken: token } });
+    const query = 'SELECT * FROM users WHERE "passwordResetToken" = $1';
+    const result = await client.query(query, [token]);
+    const user = result.rows[0];
 
     if (!user) {
       return res.status(400).json({ error: 'Invalid token' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    user.password = hashedPassword;
-    user.passwordResetToken = null;
-    user.passwordResetTokenExpiration = null;
-    await user.save();
+    const updateQuery = `
+      UPDATE users
+      SET password = $1, "passwordResetToken" = NULL, "passwordResetExpires" = NULL
+      WHERE id = $2
+      RETURNING *;
+    `;
+    await client.query(updateQuery, [hashedPassword, user.id]);
 
     res.json({ success: 'Your password has been successfully reset.' });
   } catch (error) {

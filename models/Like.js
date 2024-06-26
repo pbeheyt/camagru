@@ -1,28 +1,17 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../database/init');
-const User = require('./User');
-const Image = require('./Image');
+const { client } = require('../database/connect');
 
-class Like extends Model {
-	static associate(models) {
-	  this.belongsTo(models.User, { foreignKey: 'userId' });
-	  this.belongsTo(models.Image, { foreignKey: 'imageId' });
-	}
-  }
+const createLikeTable = async () => {
+  const query = `
+    CREATE TABLE IF NOT EXISTS likes (
+      id SERIAL PRIMARY KEY,
+      "userId" INTEGER NOT NULL REFERENCES users(id),
+      "imageId" INTEGER NOT NULL REFERENCES images(id),
+      "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+    );
+  `;
+  await client.query(query);
+};
 
-Like.init({
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  imageId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  }
-}, {
-  sequelize,
-  modelName: 'Like',
-  tableName: 'likes'
-});
-
-module.exports = Like;
+module.exports = {
+  createLikeTable,
+};
