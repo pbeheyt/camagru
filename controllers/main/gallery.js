@@ -44,15 +44,67 @@ exports.getImages = async (req, res) => {
       count = parseInt(countResult.rows[0].count, 10);
     }
 
+    if (images.length === 0) {
+      return res.json({ success: true, images: [], totalPages: 0, currentPage: page });
+    }
+
+    // Fetch related users
+    const userIds = images.map(image => image.userId);
+    const userQuery = `
+      SELECT id, username FROM users
+      WHERE id = ANY($1);
+    `;
+    const userResult = await client.query(userQuery, [userIds]);
+    const users = userResult.rows;
+
+    // Fetch likes for each image
+    const imageIds = images.map(image => image.id);
+    const likesQuery = `
+      SELECT "imageId", COUNT(*) AS count
+      FROM likes
+      WHERE "imageId" = ANY($1)
+      GROUP BY "imageId";
+    `;
+    const likesResult = await client.query(likesQuery, [imageIds]);
+    const likes = likesResult.rows;
+
+    // Fetch comments for each image
+    const commentsQuery = `
+      SELECT comments.*, users.username AS commenterUsername
+      FROM comments
+      JOIN users ON comments."userId" = users.id
+      WHERE comments."imageId" = ANY($1);
+    `;
+    const commentsResult = await client.query(commentsQuery, [imageIds]);
+    const comments = commentsResult.rows;
+
+    // Aggregate data
+    const imagesWithDetails = images.map(image => {
+      const imageUser = users.find(user => user.id === image.userId);
+      const imageLikes = likes.find(like => like.imageId === image.id) || { count: 0 };
+      const imageComments = comments.filter(comment => comment.imageId === image.id);
+
+      return {
+        ...image,
+        user: imageUser,
+        likes: Array.from({ length: imageLikes.count }),
+        comments: imageComments.map(comment => ({
+          id: comment.id,
+          text: comment.text,
+          user: { username: comment.commenterUsername }
+        }))
+      };
+    });
+
     const totalPages = Math.ceil(count / limit);
-    res.json({ success: true, images, totalPages, currentPage: page });
+    res.json({ success: true, images: imagesWithDetails, totalPages, currentPage: page });
   } catch (error) {
     console.error('Error fetching images:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
-  
-  
+
+
 exports.likeImage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -96,7 +148,7 @@ exports.likeImage = async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
-  
+
 exports.commentImage = async (req, res) => {
   try {
     const { id } = req.params; // image ID
@@ -124,7 +176,7 @@ exports.commentImage = async (req, res) => {
     const imageQuery = `
       SELECT images.*, users.email AS user_email, users.username AS user_username
       FROM images
-      JOIN users ON images.userId = users.id
+      JOIN users ON images."userId" = users.id
       WHERE images.id = $1;
     `;
     const imageResult = await client.query(imageQuery, [id]);
@@ -141,4 +193,5 @@ exports.commentImage = async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
+
   

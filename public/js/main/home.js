@@ -16,173 +16,174 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	function fetchImages(page = 1) {
-        if (page > totalPages || isLoading) {
-            return;
-        }
-        isLoading = true;
-        loadingSpinner.style.display = 'block';
+		if (page > totalPages || isLoading) {
+			return;
+		}
+		isLoading = true;
+		loadingSpinner.style.display = 'block';
 
-        setTimeout(() => {
-            fetch(`/images?page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    loadingSpinner.style.display = 'none';
-                    isLoading = false;
+		setTimeout(() => {
+			fetch(`/images?page=${page}`)
+				.then(response => response.json())
+				.then(data => {
+					loadingSpinner.style.display = 'none';
+					isLoading = false;
 
-                    if (data.success) {
-                        if (data.images.length === 0 && currentPage === 1) {
-                            displayNoImagesMessage();
-                        } else {
-                            appendImages(data.images);
-                        }
-                        currentPage = data.currentPage;
-                        totalPages = data.totalPages; // Update totalPages from the response
-                    }
-                })
-                .catch(error => {
-                    loadingSpinner.style.display = 'none';
-                    isLoading = false;
-                    console.error('Error fetching images:', error);
-                });
-        }, 1000); // 1000ms delay for loading animation
-    }
+					if (data.success) {
+						if (data.images.length === 0 && currentPage === 1) {
+							displayNoImagesMessage();
+						} else {
+							appendImages(data.images);
+						}
+						currentPage = data.currentPage;
+						totalPages = data.totalPages; // Update totalPages from the response
+					}
+				})
+				.catch(error => {
+					loadingSpinner.style.display = 'none';
+					isLoading = false;
+					console.error('Error fetching images:', error);
+				});
+		}, 1000); // 1000ms delay for loading animation
+	}
 		
-    function displayNoImagesMessage() {
-        const messageContainer = document.createElement('div');
-        messageContainer.classList.add('no-images-message');
-        messageContainer.textContent = 'Nothing to show here for the moment...';
-        imageFeed.appendChild(messageContainer);
-    }
+	function displayNoImagesMessage() {
+		const messageContainer = document.createElement('div');
+		messageContainer.classList.add('no-images-message');
+		messageContainer.textContent = 'Nothing to show here for the moment...';
+		imageFeed.appendChild(messageContainer);
+	}
 
 	function appendImages(images) {
 		images.forEach(image => {
 			console.log(image);
-		  const imageContainer = document.createElement('div');
-		  imageContainer.classList.add('image-container');
-		  imageContainer.dataset.imageId = image.id;
-	  
-		  const userInfoElement = document.createElement('div');
-		  userInfoElement.classList.add('user-info');
-	  
-		  const usernameElement = document.createElement('span');
-		  usernameElement.classList.add('username');
-		  usernameElement.textContent = image.User.username;
-	  
-		  const dateElement = document.createElement('span');
-		  dateElement.classList.add('date');
-		  dateElement.textContent = formatDate(image.createdAt);
-	  
-		  userInfoElement.appendChild(usernameElement);
-		  userInfoElement.appendChild(dateElement);
-	  
-		  const imgElement = document.createElement('img');
-		  imgElement.src = image.url;
-		  imgElement.alt = image.description;
-	  
-		  const actionsElement = document.createElement('div');
-		  actionsElement.classList.add('actions');
-	  
-		  const likeButton = document.createElement('img');
-		  likeButton.src = '/img/asset/like-off.png';
-		  likeButton.classList.add('like-button');
-		  likeButton.addEventListener('click', () => {
-			if (isAuthenticated) {
-			  likeImage(image.id, likeButton, likesElement);
-			} else {
-			  alert('You need to log in to like an image.');
+			const imageContainer = document.createElement('div');
+			imageContainer.classList.add('image-container');
+			imageContainer.dataset.imageId = image.id;
+	
+			const userInfoElement = document.createElement('div');
+			userInfoElement.classList.add('user-info');
+	
+			const usernameElement = document.createElement('span');
+			usernameElement.classList.add('username');
+			usernameElement.textContent = image.user.username;
+	
+			const dateElement = document.createElement('span');
+			dateElement.classList.add('date');
+			dateElement.textContent = formatDate(image.createdAt);
+	
+			userInfoElement.appendChild(usernameElement);
+			userInfoElement.appendChild(dateElement);
+	
+			const imgElement = document.createElement('img');
+			imgElement.src = image.url;
+			imgElement.alt = image.description;
+	
+			const actionsElement = document.createElement('div');
+			actionsElement.classList.add('actions');
+	
+			const likeButton = document.createElement('img');
+			likeButton.src = '/img/asset/like-off.png';
+			likeButton.classList.add('like-button');
+			likeButton.addEventListener('click', () => {
+				if (isAuthenticated) {
+					likeImage(image.id, likeButton, likesElement);
+				} else {
+					alert('You need to log in to like an image.');
+				}
+			});
+	
+			const likesElement = document.createElement('span');
+			likesElement.classList.add('like-count');
+			likesElement.textContent = `${image.likeCount} likes`;
+	
+			const commentsTitleContainer = document.createElement('div');
+			commentsTitleContainer.classList.add('comments-title-container');
+	
+			const commentsTitle = document.createElement('h4');
+			commentsTitle.classList.add('comments-title');
+			commentsTitle.textContent = 'Comments';
+	
+			commentsTitleContainer.appendChild(commentsTitle);
+			actionsElement.appendChild(likeButton);
+			actionsElement.appendChild(likesElement);
+			commentsTitleContainer.appendChild(actionsElement);
+	
+			const commentsTitleStripe = document.createElement('hr');
+			commentsTitleStripe.classList.add('title-stripe');
+	
+			const commentsElement = document.createElement('div');
+			commentsElement.classList.add('comments-container');
+			commentsElement.dataset.imageId = image.id;
+	
+			// Add comments to the image
+			image.comments.forEach(comment => {
+				const commentElement = document.createElement('p');
+				commentElement.classList.add('comment');
+				commentElement.innerHTML = `<strong>${comment.user.username}</strong>&nbsp;&nbsp;&nbsp;${comment.text}`;
+				commentsElement.appendChild(commentElement);
+			});
+	
+			const commentForm = document.createElement('form');
+			commentForm.classList.add('comment-form');
+			const commentInput = document.createElement('input');
+			commentInput.type = 'text';
+			commentInput.placeholder = 'Add a comment...';
+			const commentButton = document.createElement('img');
+			commentButton.src = '/img/asset/comment-off.png';
+			commentButton.classList.add('comment-button');
+	
+			// Trigger form submission when the comment button is clicked
+			commentButton.addEventListener('click', (event) => {
+				event.preventDefault(); // Prevent the default behavior
+				if (isAuthenticated) {
+					commentImage(image.id, commentInput.value, commentsElement);
+					commentInput.value = ''; // Clear the input field after submitting
+					commentButton.src = '/img/asset/comment-on.png'; // Change button to "on"
+					setTimeout(() => {
+						commentButton.src = '/img/asset/comment-off.png'; // Change back to "off" after 500ms
+					}, 500);
+				} else {
+					alert('You need to log in to comment.');
+				}
+			});
+	
+			commentForm.appendChild(commentInput);
+			commentForm.appendChild(commentButton);
+	
+			// Add event listener to the form to handle Enter key submission
+			commentForm.addEventListener('submit', (event) => {
+				event.preventDefault();
+				if (isAuthenticated) {
+					commentImage(image.id, commentInput.value, commentsElement);
+					commentInput.value = ''; // Clear the input field after submitting
+				} else {
+					alert('You need to log in to comment.');
+				}
+			});
+	
+			imageContainer.appendChild(userInfoElement);
+			imageContainer.appendChild(imgElement);
+	
+			if (image.description) {
+				const descriptionElement = document.createElement('p');
+				descriptionElement.classList.add('description');
+				descriptionElement.innerHTML = `<strong>${image.user.username}</strong>&nbsp;&nbsp;&nbsp;${image.description}`;
+				imageContainer.appendChild(descriptionElement);
 			}
-		  });
-	  
-		  const likesElement = document.createElement('span');
-		  likesElement.classList.add('like-count');
-		  likesElement.textContent = `${image.Likes.length} likes`;
-	  
-		  const commentsTitleContainer = document.createElement('div');
-		  commentsTitleContainer.classList.add('comments-title-container');
-	  
-		  const commentsTitle = document.createElement('h4');
-		  commentsTitle.classList.add('comments-title');
-		  commentsTitle.textContent = 'Comments';
-	  
-		  commentsTitleContainer.appendChild(commentsTitle);
-		  actionsElement.appendChild(likeButton);
-		  actionsElement.appendChild(likesElement);
-		  commentsTitleContainer.appendChild(actionsElement);
-	  
-		  const commentsTitleStripe = document.createElement('hr');
-		  commentsTitleStripe.classList.add('title-stripe');
-	  
-		  const commentsElement = document.createElement('div');
-		  commentsElement.classList.add('comments-container');
-		  commentsElement.dataset.imageId = image.id;
-		  image.Comments.forEach(comment => {
-			const commentElement = document.createElement('p');
-			commentElement.classList.add('comment');
-			commentElement.innerHTML = `<strong>${comment.User.username}</strong>&nbsp;&nbsp;&nbsp;${comment.text}`;
-			commentsElement.appendChild(commentElement);
-		  });
-	  
-		  const commentForm = document.createElement('form');
-		  commentForm.classList.add('comment-form');
-		  const commentInput = document.createElement('input');
-		  commentInput.type = 'text';
-		  commentInput.placeholder = 'Add a comment...';
-		  const commentButton = document.createElement('img');
-		  commentButton.src = '/img/asset/comment-off.png';
-		  commentButton.classList.add('comment-button');
-		  
-      // Trigger form submission when the comment button is clicked
-      commentButton.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevent the default behavior
-        if (isAuthenticated) {
-        commentImage(image.id, commentInput.value, commentsElement);
-        commentInput.value = ''; // Clear the input field after submitting
-        commentButton.src = '/img/asset/comment-on.png'; // Change button to "on"
-        setTimeout(() => {
-          commentButton.src = '/img/asset/comment-off.png'; // Change back to "off" after 500ms
-        }, 500);
-        } else {
-        alert('You need to log in to comment.');
-        }
-      });
-		  
-		  commentForm.appendChild(commentInput);
-		  commentForm.appendChild(commentButton);
-		  
-		  // Add event listener to the form to handle Enter key submission
-		  commentForm.addEventListener('submit', (event) => {
-			event.preventDefault();
-			if (isAuthenticated) {
-			  commentImage(image.id, commentInput.value, commentsElement);
-			  commentInput.value = ''; // Clear the input field after submitting
-			} else {
-			  alert('You need to log in to comment.');
-			}
-		  });
-	  
-		  imageContainer.appendChild(userInfoElement);
-		  imageContainer.appendChild(imgElement);
-	  
-		  if (image.description) {
-			const descriptionElement = document.createElement('p');
-			descriptionElement.classList.add('description');
-			descriptionElement.innerHTML = `<strong>${image.User.username}</strong>&nbsp;&nbsp;&nbsp;${image.description}`;
-			imageContainer.appendChild(descriptionElement);
-		  }
-	  
-		  const descriptionStripe = document.createElement('hr');
-		  descriptionStripe.classList.add('description-stripe');
-	  
-		  imageContainer.appendChild(descriptionStripe);
-		  imageContainer.appendChild(commentsTitleContainer);
-		  imageContainer.appendChild(commentsTitleStripe);
-		  imageContainer.appendChild(commentsElement);
-		  imageContainer.appendChild(commentForm);
-	  
-		  imageFeed.appendChild(imageContainer);
+	
+			const descriptionStripe = document.createElement('hr');
+			descriptionStripe.classList.add('description-stripe');
+	
+			imageContainer.appendChild(descriptionStripe);
+			imageContainer.appendChild(commentsTitleContainer);
+			imageContainer.appendChild(commentsTitleStripe);
+			imageContainer.appendChild(commentsElement);
+			imageContainer.appendChild(commentForm);
+	
+			imageFeed.appendChild(imageContainer);
 		});
-	  }
-
+	}
 
 	function formatDate(dateString) {
 		const date = new Date(dateString);
@@ -231,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				if (data.success) {
 					const commentElement = document.createElement('p');
 					commentElement.classList.add('comment');
-					commentElement.innerHTML = `<strong>${data.comment.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
+					commentElement.innerHTML = `<strong>${data.comment.user.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
 					commentsElement.appendChild(commentElement);
 				}
 			});
@@ -255,4 +256,3 @@ document.addEventListener('DOMContentLoaded', function () {
 	// First check if the user is authenticated, then fetch images
 	checkAuth().then(() => fetchImages(currentPage));
 });
-
