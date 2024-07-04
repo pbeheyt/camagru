@@ -30,11 +30,11 @@ const server = http.createServer((req, res) => {
 });
 
 router.use(parseCookies);
-router.use(parseJson);
-router.use(parseUrlencoded);
-router.use(serveStatic);
 router.use(sessionMiddleware);
 router.use(sessionToLocals);
+router.use(parseJson);
+router.use(parseUrlencoded);
+router.use(serveStatic);  
 
 routes(router);
 

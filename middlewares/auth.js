@@ -39,43 +39,45 @@ exports.validateAccount = async (req, res, next) => {
     }
   };
 
-  exports.validateResetToken = async (req, res, next) => {
-    const token = req.url.split('/')[2]; // Extract token from URL
-  
-    try {
-      const query = 'SELECT * FROM users WHERE "passwordResetToken" = $1';
-      const result = await client.query(query, [token]);
-      const user = result.rows[0];
-  
-      if (!user) {
-        res.statusCode = 302;
-        res.setHeader('Location', '/login?error=' + encodeURIComponent('Invalid token'));
-        res.end();
-        return;
-      }
-      
-      if (Date.now() > new Date(user.passwordResetExpires)) {
-        res.statusCode = 302;
-        res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
-        res.end();
-        return;
-      }
-  
-      next();
-    } catch (error) {
-      console.error('Error validating reset token:', error);
-      res.statusCode = 500;
-      res.setHeader('Location', '/login?error=' + encodeURIComponent('Internal Server Error'));
+exports.validateResetToken = async (req, res, next) => {
+  const token = req.url.split('/')[2]; // Extract token from URL
+
+  try {
+    const query = 'SELECT * FROM users WHERE "passwordResetToken" = $1';
+    const result = await client.query(query, [token]);
+    const user = result.rows[0];
+
+    if (!user) {
+      res.statusCode = 302;
+      res.setHeader('Location', '/login?error=' + encodeURIComponent('Invalid token'));
       res.end();
+      return;
     }
-  };
+    
+    if (Date.now() > new Date(user.passwordResetExpires)) {
+      res.statusCode = 302;
+      res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));
+      res.end();
+      return;
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error validating reset token:', error);
+    res.statusCode = 500;
+    res.setHeader('Location', '/login?error=' + encodeURIComponent('Internal Server Error'));
+    res.end();
+  }
+};
 
 exports.authenticateUser = (req, res, next) => {
   if (req.session.userId) {
-      next();
+    console.log(`User authenticated: ${req.session.userId}`);
+    next();
   } else {
-      res.statusCode = 401;
-      res.sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
+    console.log('Authentication failed: No user session found');
+    res.statusCode = 401;
+    res.sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
   }
 };
 

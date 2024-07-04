@@ -4,21 +4,16 @@ const generateUUID = require('../utils/uuid');
 const sessions = {};
 
 exports.sessionMiddleware = (req, res, next) => {
-    const cookies = cookie.parse(req.headers.cookie || '');
-    let sessionId = cookies.sessionId;
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const sessionId = cookies.sessionId;
 
-    if (!sessionId || !sessions[sessionId]) {
-        sessionId = generateUUID();
-        sessions[sessionId] = {};
-        res.setHeader('Set-Cookie', cookie.serialize('sessionId', sessionId, {
-            httpOnly: true,
-            maxAge: 60 * 60 * 24 * 7 // 1 week
-        }));
-    }
+  if (sessionId && sessions[sessionId]) {
+      req.session = sessions[sessionId];
+  } else {
+      req.session = {};
+  }
 
-    req.session = sessions[sessionId];
-
-    next();
+  next();
 };
 
 exports.sessions = sessions;
