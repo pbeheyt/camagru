@@ -75,7 +75,7 @@ async function sendPasswordResetEmail(user, req) {
   await sendEmail(user.email, 'Password Reset Request', html);
 }
 
-async function sendCommentNotificationEmail(imageUser, commenter, commentText) {
+async function sendCommentNotificationEmail(imageUserEmail, imageUserUsername, commenterUsername, commentText) {
   const html = `
     <div style="background-color: #f5f5f5; font-family: Arial, sans-serif; margin: 0; padding: 0;">
       <div style="background-color: #343a40; color: #ffffff; font-size: 24px; font-weight: bold; line-height: 1.2; padding: 20px; text-align: center;">
@@ -83,8 +83,8 @@ async function sendCommentNotificationEmail(imageUser, commenter, commentText) {
       </div>
       <div style="background-color: #ffffff; margin: 0 auto; max-width: 600px; padding: 20px;">
         <div style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
-          <p>Dear ${imageUser.username},</p>
-          <p>User ${commenter.username} commented on your image: ${commentText}</p>
+          <p>Dear ${imageUserUsername},</p>
+          <p>User ${commenterUsername} commented on your image: ${commentText}</p>
         </div>
         <div style="font-size: 16px; line-height: 1.5; margin-top: 20px;">
           <p>Best regards,</p>
@@ -94,8 +94,9 @@ async function sendCommentNotificationEmail(imageUser, commenter, commentText) {
     </div>
   `;
 
-  await sendEmail(imageUser.email, 'New comment on your image', html);
+  await sendEmail(imageUserEmail, 'New comment on your image', html);
 }
+
 
 module.exports = {
   sendEmail,

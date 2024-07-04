@@ -72,7 +72,6 @@ exports.validateResetToken = async (req, res, next) => {
 
 exports.authenticateUser = (req, res, next) => {
   if (req.session.userId) {
-    console.log(`User authenticated: ${req.session.userId}`);
     next();
   } else {
     console.log('Authentication failed: No user session found');
