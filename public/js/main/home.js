@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				if (data.success) {
 					const commentElement = document.createElement('p');
 					commentElement.classList.add('comment');
-					commentElement.innerHTML = `<strong>${data.comment.user.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
+					commentElement.innerHTML = `<strong>${data.comment.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
 					commentsElement.appendChild(commentElement);
 				}
 			});
