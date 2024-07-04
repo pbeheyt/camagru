@@ -93,7 +93,7 @@ exports.getImages = async (req, res) => {
       return {
         ...image,
         username: imageUser ? imageUser.username : null,
-        likes: Array.from({ length: imageLikes.count }),
+        likes: imageLikes.count,
         comments: imageComments
       };
     });

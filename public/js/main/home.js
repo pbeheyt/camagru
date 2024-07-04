@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 			const likesElement = document.createElement('span');
 			likesElement.classList.add('like-count');
-			likesElement.textContent = `${image.likes.length} likes`;
+			likesElement.textContent = `${image.likes} likes`;
 
 			const commentsTitleContainer = document.createElement('div');
 			commentsTitleContainer.classList.add('comments-title-container');
