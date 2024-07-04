@@ -70,9 +70,8 @@ exports.getImages = async (req, res) => {
 
     // Fetch comments for each image
     const commentsQuery = `
-      SELECT comments.*, users.username AS commenterUsername
+      SELECT comments.*
       FROM comments
-      JOIN users ON comments."userId" = users.id
       WHERE comments."imageId" = ANY($1);
     `;
     const commentsResult = await client.query(commentsQuery, [imageIds]);
@@ -82,25 +81,32 @@ exports.getImages = async (req, res) => {
     const imagesWithDetails = images.map(image => {
       const imageUser = users.find(user => user.id === image.userId);
       const imageLikes = likes.find(like => like.imageId === image.id) || { count: 0 };
-      const imageComments = comments.filter(comment => comment.imageId === image.id);
+      const imageComments = comments.filter(comment => comment.imageId === image.id).map(comment => {
+        const commenter = users.find(user => user.id === comment.userId);
+        return {
+          id: comment.id,
+          text: comment.text,
+          username: commenter ? commenter.username : null
+        };
+      });
 
       return {
         ...image,
-        user: imageUser,
+        username: imageUser ? imageUser.username : null,
         likes: Array.from({ length: imageLikes.count }),
-        comments: imageComments.map(comment => ({
-          id: comment.id,
-          text: comment.text,
-          user: { username: comment.commenterUsername }
-        }))
+        comments: imageComments
       };
     });
 
-    const totalPages = Math.ceil(count / limit);
-    res.json({ success: true, images: imagesWithDetails, totalPages, currentPage: page });
+    res.json({
+      success: true,
+      images: imagesWithDetails,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    });
   } catch (error) {
-    console.error('Error fetching images:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
 

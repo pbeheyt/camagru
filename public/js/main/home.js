@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	function appendImages(images) {
 		images.forEach(image => {
-			console.log(image);
 			const imageContainer = document.createElement('div');
 			imageContainer.classList.add('image-container');
 			imageContainer.dataset.imageId = image.id;
@@ -66,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	
 			const usernameElement = document.createElement('span');
 			usernameElement.classList.add('username');
-			usernameElement.textContent = image.user.username;
+			usernameElement.textContent = image.username;
 	
 			const dateElement = document.createElement('span');
 			dateElement.classList.add('date');
@@ -96,8 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			const likesElement = document.createElement('span');
 			likesElement.classList.add('like-count');
 			likesElement.textContent = `${image.likes.length} likes`;
-			console.log(image);
-			console.log(image.likes);
 
 			const commentsTitleContainer = document.createElement('div');
 			commentsTitleContainer.classList.add('comments-title-container');
@@ -122,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			image.comments.forEach(comment => {
 				const commentElement = document.createElement('p');
 				commentElement.classList.add('comment');
-				commentElement.innerHTML = `<strong>${comment.user.username}</strong>&nbsp;&nbsp;&nbsp;${comment.text}`;
+				commentElement.innerHTML = `<strong>${comment.username}</strong>&nbsp;&nbsp;&nbsp;${comment.text}`;
 				commentsElement.appendChild(commentElement);
 			});
 	
@@ -170,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			if (image.description) {
 				const descriptionElement = document.createElement('p');
 				descriptionElement.classList.add('description');
-				descriptionElement.innerHTML = `<strong>${image.user.username}</strong>&nbsp;&nbsp;&nbsp;${image.description}`;
+				descriptionElement.innerHTML = `<strong>${image.username}</strong>&nbsp;&nbsp;&nbsp;${image.description}`;
 				imageContainer.appendChild(descriptionElement);
 			}
 	
