@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	const closePreview = document.getElementById('close-preview');
 	const loadingOverlay = document.getElementById('loading-overlay');
 	const shareImgur = document.getElementById('share-imgur');
+	const imgurDescriptionInput = document.getElementById('imgur-description');
   
 	let selectedSuperposableImage = null;
 	let gifInProgress = false;
+	let currentImageUrl = '';
   
 	async function initWebcam() {
 	  try {
@@ -146,11 +148,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	  const capturedImageData = canvas.toDataURL('image/png');
   
 	  fetch('/studio/capture', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ imageData: capturedImageData, superposableImage: selectedSuperposableImage })
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ imageData: capturedImageData, superposableImage: selectedSuperposableImage })
 	  })
 	  .then(response => response.json())
 	  .then(data => {
@@ -158,26 +160,25 @@ document.addEventListener('DOMContentLoaded', function() {
 		  previewImage.src = data.imageUrl;
 		  currentImageUrl = data.imageUrl;
 		  previewModal.style.display = 'block';
-		  updateShareLinks(data.imageUrl);
 		} else {
 		  console.error('Error capturing image:', data.error);
 		}
 	  })
 	  .catch(error => {
-		console.error('Error:', error);
+			sole.error('Error:', error);
 	  });
 	});
   
 	uploadButton.addEventListener('click', () => {
 	  if (!selectedSuperposableImage) {
-		alert('You should select a superposable image to create an image.');
-		return;
+			alert('You should select a superposable image to create an image.');
+			return;
 	  }
   
 	  const file = uploadInput.files[0];
 	  if (!file) {
-		alert('You should upload a file to create an image.');
-		return;
+			alert('You should upload a file to create an image.');
+			return;
 	  }
   
 	  const formData = new FormData();
@@ -185,27 +186,26 @@ document.addEventListener('DOMContentLoaded', function() {
 	  formData.append('superposableImage', selectedSuperposableImage);
   
 	  fetch('/studio/upload', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: formData
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: formData
 	  })
 	  .then(response => response.json())
 	  .then(data => {
-		if (data.success) {
-		  previewImage.src = data.imageUrl;
-		  currentImageUrl = data.imageUrl;
-		  previewModal.style.display = 'block';
-		  updateShareLinks(data.imageUrl);
-		} else {
-		  console.error('Error uploading image:', data.error);
-		}
-	  })
-	  .catch(error => {
-		console.error('Error:', error);
-	  });
-	});
+			if (data.success) {
+				previewImage.src = data.imageUrl;
+				currentImageUrl = data.imageUrl;
+				previewModal.style.display = 'block';
+			} else {
+				console.error('Error uploading image:', data.error);
+			}
+			})
+			.catch(error => {
+			console.error('Error:', error);
+			});
+		});
   
 	postButton.addEventListener('click', () => {
 	  fetch('/studio/post', {
@@ -220,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (data.success) {
 		  alert('Image posted successfully');
 		  addThumbnail(data.image);
+			imgurDescriptionInput.value = '';
 		  previewModal.style.display = 'none';
 		} else {
 		  console.error('Error posting image:', data.error);
@@ -232,10 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	createGifButton.addEventListener('click', () => {
 	  if (!selectedSuperposableImage) {
-		alert('You should select a superposable image to create a GIF.');
-		return;
+			alert('You should select a superposable image to create a GIF.');
+			return;
 	  }
 	  if (gifInProgress) return;
+
 	  gifInProgress = true;
 	  const captureInterval = 1000 / 15;
 	  const captureDuration = 2000;
@@ -248,83 +250,83 @@ document.addEventListener('DOMContentLoaded', function() {
 	  gifNotification.style.display = 'block';
   
 	  const captureFrame = () => {
-		context.drawImage(webcamElement, 0, 0, captureCanvas.width, captureCanvas.height);
-		capturedFrames.push(captureCanvas.toDataURL('image/png'));
-  
-		if (capturedFrames.length * captureInterval >= captureDuration) {
-		  gifNotification.textContent = 'Processing image to server...';
-		  sendFramesToServer(capturedFrames);
-		} else {
-		  setTimeout(captureFrame, captureInterval);
-		}
+			context.drawImage(webcamElement, 0, 0, captureCanvas.width, captureCanvas.height);
+			capturedFrames.push(captureCanvas.toDataURL('image/png'));
+		
+			if (capturedFrames.length * captureInterval >= captureDuration) {
+				gifNotification.textContent = 'Processing image to server...';
+				sendFramesToServer(capturedFrames);
+			} else {
+				setTimeout(captureFrame, captureInterval);
+			}
 	  };
   
 	  captureFrame();
 	});
   
 	function sendFramesToServer(frames) {
-	  fetch('/studio/create-gif', {
+		fetch('/studio/create-gif', {
 		method: 'POST',
 		headers: {
-		  'Content-Type': 'application/json'
+			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({ imageUrls: frames, delay: 1000 / 15, superposableImage: selectedSuperposableImage })
-	  })
-	  .then(response => response.json())
-	  .then(data => {
-		if (data.success) {
-		  alert('GIF created successfully');
-		  previewImage.src = data.imageUrl;
-		  currentImageUrl = data.imageUrl;
-		  previewModal.style.display = 'block';
-		  gifNotification.style.display = 'none';
-		  gifInProgress = false;
-		  updateShareLinks(data.imageUrl);
-		} else {
-		  console.error('Error creating GIF:', data.error);
-		  gifNotification.style.display = 'none';
-		  gifInProgress = false;
-		}
-	  })
-	  .catch(error => {
-		console.error('Error:', error);
-		gifNotification.style.display = 'none';
-		gifInProgress = false;
-	  });
-	}
-  
-	discardButton.addEventListener('click', () => {
-	  previewModal.style.display = 'none';
-	});
-  
-	closePreview.addEventListener('click', () => {
-	  previewModal.style.display = 'none';
-	});
-  
-	function updateShareLinks(imageUrl) {
-	  shareImgur.addEventListener('click', () => {
-		const description = document.getElementById('imgur-description').value;
-	
-		fetch('/studio/share-imgur', {
-		  method: 'POST',
-		  headers: {
-			'Content-Type': 'application/json'
-		  },
-		  body: JSON.stringify({ imageUrl, description })
 		})
 		.then(response => response.json())
 		.then(data => {
-		  if (data.success) {
-			window.open(data.imgurLink, '_blank');
-		  } else {
-			console.error('Error sharing on imgur:', data.error);
-		  }
+		if (data.success) {
+			alert('GIF created successfully');
+			previewImage.src = data.imageUrl;
+			currentImageUrl = data.imageUrl;
+			previewModal.style.display = 'block';
+			gifNotification.style.display = 'none';
+			gifInProgress = false;
+		} else {
+			console.error('Error creating GIF:', data.error);
+			gifNotification.style.display = 'none';
+			gifInProgress = false;
+		}
 		})
 		.catch(error => {
-		  console.error('Error:', error);
+			console.error('Error:', error);
+			gifNotification.style.display = 'none';
+			gifInProgress = false;
 		});
-	  });
 	}
+		
+	discardButton.addEventListener('click', () => {
+		previewModal.style.display = 'none';
+		imgurDescriptionInput.value = '';
+	});
+
+	closePreview.addEventListener('click', () => {
+		previewModal.style.display = 'none';
+		imgurDescriptionInput.value = '';
+	});
+		
+	shareImgur.addEventListener('click', () => {
+		const description = imgurDescriptionInput.value;
+
+		fetch('/studio/share-imgur', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ imageUrl: currentImageUrl, description }) // Use currentImageUrl here
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				window.open(data.imgurLink, '_blank');
+				imgurDescriptionInput.value = '';
+			} else {
+				console.error('Error sharing on imgur:', data.error);
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+	});
   
 	Promise.all([initWebcam(), loadSuperposableImages(), loadThumbnails(true)]).then(() => {
 		loadingOverlay.classList.add('hidden');
