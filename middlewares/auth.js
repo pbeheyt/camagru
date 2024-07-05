@@ -74,9 +74,12 @@ exports.authenticateUser = (req, res, next) => {
   if (req.session.userId) {
     next();
   } else {
-    console.log('Authentication failed: No user session found');
-    res.statusCode = 401;
-    res.sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
+    // Check if the request expects JSON response
+    if (req.headers['content-type'] && req.headers['content-type'].indexOf('application/json') !== -1) {
+      res.status(401).json({ success: false, message: 'User not authenticated' });
+    } else {
+      res.status(401).sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
+    }
   }
 };
 

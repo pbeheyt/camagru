@@ -186,6 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	  fetch('/studio/upload', {
 		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
 		body: formData
 	  })
 	  .then(response => response.json())
@@ -322,7 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	  });
 	}
-	
   
 	Promise.all([initWebcam(), loadSuperposableImages(), loadThumbnails(true)]).then(() => {
 		loadingOverlay.classList.add('hidden');

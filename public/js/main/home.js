@@ -8,7 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Check if the user is authenticated
 	function checkAuth() {
-		return fetch('/auth/check')
+		return fetch('/auth/check', {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+		})
 			.then(response => response.json())
 			.then(data => {
 				isAuthenticated = data.authenticated;
@@ -23,7 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		loadingSpinner.style.display = 'block';
 
 		setTimeout(() => {
-			fetch(`/images?page=${page}`)
+			fetch(`/images?page=${page}`, {
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			})
 				.then(response => response.json())
 				.then(data => {
 					loadingSpinner.style.display = 'none';
@@ -204,18 +212,21 @@ document.addEventListener('DOMContentLoaded', function () {
 	function likeImage(imageId, likeButton, likesElement) {
 		fetch(`/images/${imageId}/like`, {
 			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
 		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					likesElement.textContent = `${data.likeCount} likes`;
-					if (data.liked) {
-						likeButton.src = '/img/asset/like-on.png';
-					} else {
-						likeButton.src = '/img/asset/like-off.png';
-					}
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				likesElement.textContent = `${data.likeCount} likes`;
+				if (data.liked) {
+					likeButton.src = '/img/asset/like-on.png';
+				} else {
+					likeButton.src = '/img/asset/like-off.png';
 				}
-			});
+			}
+		});
 	}
 
 	function commentImage(imageId, text, commentsElement) {
@@ -226,15 +237,15 @@ document.addEventListener('DOMContentLoaded', function () {
 			},
 			body: JSON.stringify({ text })
 		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					const commentElement = document.createElement('p');
-					commentElement.classList.add('comment');
-					commentElement.innerHTML = `<strong>${data.comment.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
-					commentsElement.appendChild(commentElement);
-				}
-			});
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				const commentElement = document.createElement('p');
+				commentElement.classList.add('comment');
+				commentElement.innerHTML = `<strong>${data.comment.username}</strong>&nbsp;&nbsp;&nbsp;${data.comment.text}`;
+				commentsElement.appendChild(commentElement);
+			}
+		});
 	}
 
 	function handleScroll() {
