@@ -123,8 +123,11 @@ exports.deleteImage = async (req, res) => {
     fs.access(filePath, fs.constants.F_OK, async (err) => {
       if (err) {
         if (err.code === 'ENOENT') {
+          // Delete comments and likes associated with the image
+          await client.query('DELETE FROM comments WHERE "imageId" = $1', [image.id]);
+          await client.query('DELETE FROM likes WHERE "imageId" = $1', [image.id]);
           await client.query('DELETE FROM images WHERE id = $1', [image.id]);
-          return res.json({ success: true, message: 'Image record deleted, but file was not found' });
+          return res.json({ success: true, message: 'Image record and associated data deleted, but file was not found' });
         } else {
           console.error('Error accessing file:', err);
           return res.status(500).json({ success: false, error: 'Error accessing image file' });
@@ -136,6 +139,9 @@ exports.deleteImage = async (req, res) => {
             return res.status(500).json({ success: false, error: 'Error deleting image file' });
           }
 
+          // Delete comments and likes associated with the image
+          await client.query('DELETE FROM comments WHERE "imageId" = $1', [image.id]);
+          await client.query('DELETE FROM likes WHERE "imageId" = $1', [image.id]);
           await client.query('DELETE FROM images WHERE id = $1', [image.id]);
           res.json({ success: true });
         });
