@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          data.images.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          data.images.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
           data.images.forEach(image => {
             addThumbnail(image);
           });
