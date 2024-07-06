@@ -16,24 +16,22 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	  })
 	  .then(response => {
-		console.log('Response:', response);
-		return response.json();
+			return response.json();
 	  })
 	  .then(data => {
-		console.log('Data:', data);
-		if (data.success) {
-		  successMessage.textContent = data.success;
-		  errorMessage.textContent = '';
-		  setTimeout(() => {
-			window.location.href = '/login';
-		  }, 3000);
-		} else {
-		  errorMessage.textContent = data.error;
-		  successMessage.textContent = '';
-		}
+			if (data.success) {
+				successMessage.textContent = data.success;
+				errorMessage.textContent = '';
+				setTimeout(() => {
+				window.location.href = '/login';
+				}, 3000);
+			} else {
+				errorMessage.textContent = data.error;
+				successMessage.textContent = '';
+			}
 	  })
 	  .catch(error => {
-		console.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	});
 });

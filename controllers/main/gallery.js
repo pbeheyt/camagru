@@ -111,7 +111,6 @@ exports.getImages = async (req, res) => {
 };
 
 exports.likeImage = async (req, res) => {
-  console.log(req.session.userId);
   try {
     const { id } = req.params;
     const userId = req.session.userId;

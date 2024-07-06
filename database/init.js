@@ -9,7 +9,7 @@ const initializeDatabase = async () => {
     await createImageTable();
     await createCommentTable();
     await createLikeTable();
-    console.log('Database & tables created!');
+    // console.log('Database & tables created!');
   } catch (error) {
     console.error('Error creating tables:', error);
   }

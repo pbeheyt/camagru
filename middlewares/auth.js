@@ -15,7 +15,6 @@ exports.validateAccount = async (req, res, next) => {
         res.end();
         return;
       }
-      console.log(user.confirmationTokenExpires);
       if (Date.now() > new Date(user.confirmationTokenExpires)) {
         res.statusCode = 302;
         res.setHeader('Location', '/login?error=' + encodeURIComponent('Token has expired'));

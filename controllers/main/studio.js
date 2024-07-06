@@ -46,7 +46,7 @@ exports.uploadImage = [
 			try {
 					const superposableImage = req.body.superposableImage;
 					const filePath = req.file.path;
-					console.log('File path for saving image:', filePath);
+					// console.log('File path for saving image:', filePath);
 
 					const canvas = createCanvas(640, 480);
 					const context = canvas.getContext('2d');

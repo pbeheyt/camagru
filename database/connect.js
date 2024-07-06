@@ -14,7 +14,7 @@ const connectToDatabase = async () => {
     if (!client._connected) { // Ensure the client is not already connected
       await client.connect();
       client._connected = true;
-      console.log('Database connection has been established successfully.');
+      // console.log('Database connection has been established successfully.');
     }
   } catch (err) {
     console.error('Unable to connect to the database:', err);
