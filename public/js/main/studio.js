@@ -29,32 +29,85 @@ document.addEventListener('DOMContentLoaded', function() {
 	  }
 	}
   
+	function getNonTransparentBoundingBox(image) {
+		const canvas = document.createElement('canvas');
+		const context = canvas.getContext('2d');
+		canvas.width = image.width;
+		canvas.height = image.height;
+		context.drawImage(image, 0, 0);
+	
+		const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+		const pixels = imageData.data;
+		
+		let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+		
+		for (let y = 0; y < canvas.height; y++) {
+			for (let x = 0; x < canvas.width; x++) {
+				const alpha = pixels[(y * canvas.width + x) * 4 + 3];
+				if (alpha > 0) {
+					if (x < minX) minX = x;
+					if (y < minY) minY = y;
+					if (x > maxX) maxX = x;
+					if (y > maxY) maxY = y;
+				}
+			}
+		}
+		
+		return { minX, minY, maxX, maxY };
+	}
+	
+	function createThumbnail(image, boundingBox, thumbnailWidth, thumbnailHeight) {
+		const { minX, minY, maxX, maxY } = boundingBox;
+		const cropWidth = maxX - minX;
+		const cropHeight = maxY - minY;
+		
+		const canvas = document.createElement('canvas');
+		canvas.width = thumbnailWidth;
+		canvas.height = thumbnailHeight;
+		const context = canvas.getContext('2d');
+		
+		context.drawImage(
+			image,
+			minX, minY, cropWidth, cropHeight,
+			0, 0, thumbnailWidth, thumbnailHeight
+		);
+		
+		return canvas.toDataURL('image/png');
+	}
+	
 	function loadSuperposableImages() {
-	  return fetch('/images/superposable')
-		.then(response => response.json())
-		.then(data => {
-		  if (data.success) {
-			data.images.forEach(src => {
-			  const img = document.createElement('img');
-			  img.src = src;
-			  img.classList.add('superposable-image');
-			  img.addEventListener('click', () => {
-				selectedSuperposableImage = src;
-				document.querySelectorAll('.superposable-image').forEach(image => {
-				  image.classList.remove('selected');
-				});
-				img.classList.add('selected');
-				overlaySuperposableImage(src);
-			  });
-			  superposableImagesContainer.appendChild(img);
+		return fetch('/images/superposable')
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					data.images.forEach(src => {
+						const img = new Image();
+						img.src = src;
+						img.onload = () => {
+							const boundingBox = getNonTransparentBoundingBox(img);
+							const thumbnailDataUrl = createThumbnail(img, boundingBox, 100, 100);
+							
+							const thumbnailElement = document.createElement('img');
+							thumbnailElement.src = thumbnailDataUrl;
+							thumbnailElement.classList.add('superposable-image');
+							thumbnailElement.addEventListener('click', () => {
+								selectedSuperposableImage = src;
+								document.querySelectorAll('.superposable-image').forEach(image => {
+									image.classList.remove('selected');
+								});
+								thumbnailElement.classList.add('selected');
+								overlaySuperposableImage(src);
+							});
+							superposableImagesContainer.appendChild(thumbnailElement);
+						};
+					});
+				} else {
+					console.error('Error fetching superposable images:', data.error);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
 			});
-		  } else {
-			console.error('Error fetching superposable images:', data.error);
-		  }
-		})
-		.catch(error => {
-		  console.error('Error:', error);
-		});
 	}
   
   function overlaySuperposableImage(src) {
@@ -68,8 +121,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoWrapper = document.querySelector('.video-wrapper');
     videoWrapper.appendChild(overlay);
   }
-  
-  
+	
+	function addThumbnail(imageUrl) {
+		const image = new Image();
+		image.src = imageUrl;
+		
+		image.onload = () => {
+			const boundingBox = getNonTransparentBoundingBox(image);
+			const thumbnailDataUrl = createThumbnail(image, boundingBox, 100, 100);
+			
+			const thumbnailContainer = document.createElement('div');
+			thumbnailContainer.classList.add('thumbnail-container');
+			
+			const img = document.createElement('img');
+			img.src = thumbnailDataUrl;
+			img.classList.add('thumbnail-image');
+			
+			const deleteOverlay = document.createElement('div');
+			deleteOverlay.classList.add('delete-overlay');
+			deleteOverlay.innerHTML = '<span style="color: white;">&#10006;</span>';
+			
+			deleteOverlay.addEventListener('click', (event) => {
+				event.stopPropagation();
+				if (confirm('Do you want to delete this image?')) {
+					deleteImage(image.id, thumbnailContainer);
+				}
+			});
+			
+			thumbnailContainer.appendChild(img);
+			thumbnailContainer.appendChild(deleteOverlay);
+			thumbnailsContainer.insertBefore(thumbnailContainer, thumbnailsContainer.firstChild);
+		};
+	}
+
   function loadThumbnails(userSpecific = false) {
     const url = userSpecific ? '/images?user=true&limit=100' : '/images?limit=100';
     return fetch(url)
