@@ -254,42 +254,39 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
   
 	uploadButton.addEventListener('click', () => {
-	  if (!selectedSuperposableImage) {
+		if (!selectedSuperposableImage) {
 			alert('You should select a superposable image to create an image.');
 			return;
-	  }
-  
-	  const file = uploadInput.files[0];
-	  if (!file) {
+		}
+	
+		const file = uploadInput.files[0];
+		if (!file) {
 			alert('You should upload a file to create an image.');
 			return;
-	  }
-  
-	  const formData = new FormData();
-	  formData.append('image', file);
-	  formData.append('superposableImage', selectedSuperposableImage);
-  
-	  fetch('/studio/upload', {
+		}
+	
+		const formData = new FormData();
+		formData.append('image', file);
+		formData.append('superposableImage', selectedSuperposableImage);
+	
+		fetch('/studio/upload', {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
 			body: formData
-	  })
-	  .then(response => response.json())
-	  .then(data => {
-			if (data.success) {
-				previewImage.src = data.imageUrl;
-				currentImageUrl = data.imageUrl;
-				previewModal.style.display = 'block';
-			} else {
-				console.error('Error uploading image:', data.error);
-			}
+		})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					previewImage.src = data.imageUrl;
+					currentImageUrl = data.imageUrl;
+					previewModal.style.display = 'block';
+				} else {
+					alert(`Error uploading image: ${data.error}`);
+				}
 			})
 			.catch(error => {
-			console.error('Error:', error);
+				console.error('Error:', error);
 			});
-		});
+	});	
   
 	postButton.addEventListener('click', () => {
 	  fetch('/studio/post', {

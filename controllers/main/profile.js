@@ -1,8 +1,20 @@
 const bcrypt = require('bcrypt');
 const { client } = require('../../database/connect');
+const { escapeHtml, isValidEmail, isValidPassword } = require('../../utils');
 
 exports.updateUserInfo = async (req, res) => {
   const { email, username, 'current-password': currentPassword } = req.body;
+
+  if (!email && !username) {
+    return res.status(400).json({ error: 'No information to update' });
+  }
+
+  if (email && !isValidEmail(email)) {
+    return res.status(400).json({ error: 'Invalid email format.' });
+  }
+
+  const sanitizedEmail = email ? escapeHtml(email) : null;
+  const sanitizedUsername = username ? escapeHtml(username) : null;
 
   try {
     const query = 'SELECT * FROM users WHERE id = $1';
@@ -21,18 +33,14 @@ exports.updateUserInfo = async (req, res) => {
     const updateFields = [];
     const updateValues = [];
 
-    if (email) {
+    if (sanitizedEmail) {
       updateFields.push('email');
-      updateValues.push(email);
+      updateValues.push(sanitizedEmail);
     }
 
-    if (username) {
+    if (sanitizedUsername) {
       updateFields.push('username');
-      updateValues.push(username);
-    }
-
-    if (updateFields.length === 0) {
-      return res.status(400).json({ error: 'No information to update' });
+      updateValues.push(sanitizedUsername);
     }
 
     const setClause = updateFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
@@ -49,6 +57,14 @@ exports.updateUserInfo = async (req, res) => {
 exports.updateUserPassword = async (req, res) => {
   const { 'old-password': oldPassword, 'new-password': newPassword, 'confirm-new-password': confirmNewPassword } = req.body;
 
+  if (!isValidPassword(newPassword)) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.' });
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({ error: 'New passwords do not match' });
+  }
+
   try {
     const query = 'SELECT * FROM users WHERE id = $1';
     const result = await client.query(query, [req.session.userId]);
@@ -63,17 +79,8 @@ exports.updateUserPassword = async (req, res) => {
       return res.status(400).json({ error: 'Invalid old password' });
     }
 
-    if (newPassword !== confirmNewPassword) {
-      return res.status(400).json({ error: 'New passwords do not match' });
-    }
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    const updateQuery = `
-      UPDATE users
-      SET password = $1
-      WHERE id = $2
-      RETURNING *;
-    `;
+    const updateQuery = 'UPDATE users SET password = $1 WHERE id = $2';
     await client.query(updateQuery, [hashedPassword, user.id]);
 
     res.status(200).json({ success: 'Password updated successfully' });

@@ -1,5 +1,6 @@
 const { sendCommentNotificationEmail } = require('../../utils/mailer');
 const { client } = require('../../database/connect');
+const { escapeHtml } = require('../../utils');
 
 exports.getImages = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -85,7 +86,7 @@ exports.getImages = async (req, res) => {
         const commenter = users.find(user => user.id === comment.userId);
         return {
           id: comment.id,
-          text: comment.text,
+          text: escapeHtml(comment.text),
           username: commenter ? commenter.username : null
         };
       });
@@ -166,7 +167,7 @@ exports.commentImage = async (req, res) => {
       VALUES ($1, $2, $3)
       RETURNING *;
     `;
-    const result = await client.query(insertQuery, [userId, id, text]);
+    const result = await client.query(insertQuery, [userId, id, escapeHtml(text)]);
     const comment = result.rows[0];
 
     // Fetch the user who commented
@@ -189,14 +190,12 @@ exports.commentImage = async (req, res) => {
 
     // Implement sendCommentNotificationEmail logic
     if (image && image.user_email) {
-      await sendCommentNotificationEmail(image.user_email, image.user_username, user.username, text);
+      await sendCommentNotificationEmail(image.user_email, image.user_username, user.username, escapeHtml(text));
     }
 
-    res.json({ success: true, comment: { text: comment.text, username: user.username } });
+    res.json({ success: true, comment: { text: escapeHtml(comment.text), username: user.username } });
   } catch (error) {
     console.error('Error commenting on image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
-
-  

@@ -1,5 +1,5 @@
 const authenticateUser = require('./auth');
-const { isValidEmail, isValidPassword } = require('./validation');
+const { isValidEmail, isValidPassword, isValidBase64} = require('./validation');
 const { generateToken, getTokenExpiration } = require('./token');
 const { sendConfirmationEmail, sendPasswordResetEmail } = require('./mailer');
 const { sendFile, sendJson } = require('./responseMethods');
@@ -10,6 +10,7 @@ module.exports = {
   authenticateUser,
   isValidEmail,
   isValidPassword,
+  isValidBase64,
   generateToken,
   getTokenExpiration,
   sendConfirmationEmail,

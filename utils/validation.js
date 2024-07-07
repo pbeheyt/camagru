@@ -1,18 +1,8 @@
-/**
- * Function to validate email address based on RFC 5322 standard.
- * @param {string} email The email address to validate.
- * @returns {boolean} True if the email address is valid, otherwise false.
- */
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-/**
- * Function to validate password based on certain criteria.
- * @param {string} password The password to validate.
- * @returns {boolean} True if the password meets the criteria, otherwise false.
- */
 function isValidPassword(password) {
     // Password must be at least 8 characters long
     if (password.length < 8) {
@@ -37,7 +27,13 @@ function isValidPassword(password) {
     return true;
 }
 
+function isValidBase64(base64) {
+    const base64Regex = /^(?:[A-Za-z0-9+/]{4})*?(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+    return base64Regex.test(base64);
+}
+
 module.exports = {
   isValidEmail,
   isValidPassword,
+  isValidBase64,
 };
