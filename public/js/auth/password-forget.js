@@ -9,11 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const formData = new URLSearchParams(new FormData(this));
 
 	  fetch('/password-forget', {
-		method: 'POST',
-		body: formData,
-		headers: {
-		  'Content-Type': 'application/x-www-form-urlencoded'
-		}
+			method: 'POST',
+			body: formData,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
 	  })
 	  .then(response => response.json())
 	  .then(data => {

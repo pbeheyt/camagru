@@ -73,8 +73,9 @@ exports.authenticateUser = (req, res, next) => {
   if (req.session.userId) {
     next();
   } else {
-    // Check if the request expects JSON response
-    if (req.headers['content-type'] && req.headers['content-type'].indexOf('application/json') !== -1) {
+    const contentType = req.headers['content-type'];
+
+    if (contentType && (contentType.indexOf('application/json') !== -1 || contentType.indexOf('application/x-www-form-urlencoded') !== -1)) {
       res.status(401).json({ success: false, message: 'User not authenticated' });
     } else {
       res.status(401).sendFile(path.join(__dirname, '../views/main', 'unauthorized.html'));
@@ -87,4 +88,3 @@ exports.isAuthenticated = (req, res, next) => {
   res.locals.isAuthenticated = req.session && req.session.userId ? true : false;
   next();
 };
-

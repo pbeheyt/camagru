@@ -30,12 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	  const formData = new URLSearchParams(new FormData(this));
   
 	  fetch('/change-info', {
-		method: 'POST',
-		body: formData,
-		headers: {
-		  'Content-Type': 'application/x-www-form-urlencoded'
-		}
-	  })
+			method: 'POST',
+			body: formData,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+		}})
 	  .then(response => response.json())
 	  .then(data => {
 		if (data.success) {
@@ -60,24 +59,27 @@ document.addEventListener('DOMContentLoaded', function() {
 	  const formData = new URLSearchParams(new FormData(this));
   
 	  fetch('/change-password', {
-		method: 'POST',
-		body: formData,
-		headers: {
-		  'Content-Type': 'application/x-www-form-urlencoded'
-		}
-	  })
+			method: 'POST',
+			body: formData,
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+		}})
 	  .then(response => response.json())
 	  .then(data => {
 		if (data.success) {
 		  successMessage.textContent = data.success;
 		  errorMessage.textContent = '';
+			successMessage.style.display = 'block';
+			errorMessage.style.display = 'none';
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';
+			errorMessage.style.display = 'block';
+			successMessage.style.display = 'none';
 		}
 	  })
 	  .catch(error => {
-		console.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	});
 });
