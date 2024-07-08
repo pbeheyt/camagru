@@ -20,10 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (data.success) {
 		  successMessage.textContent = data.success;
 		  errorMessage.textContent = '';
-		  window.location.href = '/';
+			successMessage.style.display = 'block';
+			errorMessage.style.display = 'none';
+			setTimeout(() => {
+				window.location.href = '/';
+		}, 1000);
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';
+			errorMessage.style.display = 'block';
+			successMessage.style.display = 'none';
 		}
 	  })
 	  .catch(error => {
@@ -42,5 +48,5 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (success) {
 	  successMessage.textContent = success;
 	}
-  });
+});
   

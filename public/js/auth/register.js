@@ -15,21 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
 		  'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	  })
-	  .then(response => {
-			return response.json();
-	  })
-	  .then(data => {
+	  .then(response => response.json())
+		.then(data => {
 			if (data.success) {
-				successMessage.textContent = data.success;
-				errorMessage.textContent = '';
-				setTimeout(() => {
-				window.location.href = '/login';
-				}, 3000);
+					successMessage.textContent = data.success;
+					successMessage.style.display = 'block';
+					errorMessage.style.display = 'none';
+					setTimeout(() => {
+							window.location.href = '/login';
+					}, 3000);
 			} else {
-				errorMessage.textContent = data.error;
-				successMessage.textContent = '';
+					errorMessage.textContent = data.error;
+					errorMessage.style.display = 'block';
+					successMessage.style.display = 'none';
 			}
-	  })
+		})
 	  .catch(error => {
 			console.error('Error:', error);
 	  });

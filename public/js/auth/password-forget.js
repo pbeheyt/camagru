@@ -20,12 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (data.success) {
 		  successMessage.textContent = data.success;
 		  errorMessage.textContent = '';
+			successMessage.style.display = 'block';
+			errorMessage.style.display = 'none';
 		  setTimeout(() => {
 			window.location.href = '/login';
 		  }, 3000);
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';
+			errorMessage.style.display = 'block';
+			successMessage.style.display = 'none';
 		}
 	  })
 	  .catch(error => {

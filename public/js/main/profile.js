@@ -41,13 +41,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (data.success) {
 		  successMessage.textContent = data.success;
 		  errorMessage.textContent = '';
+			successMessage.style.display = 'block';
+			errorMessage.style.display = 'none';
 		} else {
 		  errorMessage.textContent = data.error;
 		  successMessage.textContent = '';
-		}
-	  })
+			errorMessage.style.display = 'block';
+			successMessage.style.display = 'none';
+		}})
 	  .catch(error => {
-		console.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	});
   
@@ -77,5 +80,4 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.error('Error:', error);
 	  });
 	});
-  });
-  
+});

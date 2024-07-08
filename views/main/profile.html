@@ -12,8 +12,10 @@
 
   <div class="profile-container">
     <h1>Update your Profile</h1>
-    <p id="error-message" style="color: red;"></p>
-	<p id="success-message" style="color: green;"></p>
+    <div id="messages">
+      <p id="error-message" class="message message-error"></p>
+      <p id="success-message" class="message message-success"></p>
+    </div>
 
     <!-- Form to change email and username -->
     <form id="change-info-form" class="profile-form" action="/change-info" method="post">
