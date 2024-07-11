@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	async function initWebcam() {
 	  try {
-		const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-		webcamElement.srcObject = stream;
+			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+			webcamElement.srcObject = stream;
 	  } catch (error) {
-		console.error('Error accessing webcam:', error);
+			console.error('Error accessing webcam:', error);
 	  }
 	}
   

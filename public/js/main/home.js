@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
 				'Content-Type': 'application/json'
 			},
 		})
-			.then(response => response.json())
-			.then(data => {
-				isAuthenticated = data.authenticated;
-			});
+		.then(response => response.json())
+		.then(data => {
+			isAuthenticated = data.authenticated;
+		});
 	}
 
 	function fetchImages(page = 1) {

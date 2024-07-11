@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	.then(response => response.json())
 	.then(data => {
 	  if (data.success) {
-		document.getElementById('email').value = data.user.email;
-		document.getElementById('username').value = data.user.username;
+			document.getElementById('email').value = data.user.email;
+			document.getElementById('username').value = data.user.username;
 	  } else {
-		errorMessage.textContent = data.error;
+			errorMessage.textContent = data.error;
 	  }
 	})
 	.catch(error => {
