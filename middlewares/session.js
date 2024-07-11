@@ -1,5 +1,4 @@
 const cookie = require('cookie');
-const generateUUID = require('../utils/uuid');
 
 const sessions = {};
 
