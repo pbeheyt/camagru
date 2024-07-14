@@ -7,7 +7,6 @@ const upload = require('../../middlewares/upload');
 const { client } = require('../../database/connect');
 const { escapeHtml, isValidBase64 } = require('../../utils/');
 
-
 exports.captureImage = async (req, res) => {
 	try {
 			let { imageData, superposableImage } = req.body;
@@ -193,15 +192,15 @@ exports.createAnimatedGIF = async (req, res) => {
 	  encoder.setQuality(10);
   
 	  for (const imageUrl of imageUrls) {
-		const img = await loadImage(imageUrl);
-		const canvas = createCanvas(640, 480);
-		const ctx = canvas.getContext('2d');
-		ctx.drawImage(img, 0, 0, 640, 480);
-		if (superposableImage) {
-		  const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
-		  ctx.drawImage(overlayImg, 0, 0, 640, 480);
-		}
-		encoder.addFrame(ctx);
+			const img = await loadImage(imageUrl);
+			const canvas = createCanvas(640, 480);
+			const ctx = canvas.getContext('2d');
+			ctx.drawImage(img, 0, 0, 640, 480);
+			if (superposableImage) {
+				const overlayImg = await loadImage(path.join(__dirname, '../../public', superposableImage));
+				ctx.drawImage(overlayImg, 0, 0, 640, 480);
+			}
+			encoder.addFrame(ctx);
 	  }
   
 	  encoder.finish();

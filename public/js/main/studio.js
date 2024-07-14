@@ -347,11 +347,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
 	function sendFramesToServer(frames) {
 		fetch('/studio/create-gif', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({ imageUrls: frames, delay: 1000 / 15, superposableImage: selectedSuperposableImage })
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ imageUrls: frames, delay: 1000 / 15, superposableImage: selectedSuperposableImage })
 		})
 		.then(response => response.json())
 		.then(data => {

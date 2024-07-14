@@ -1,4 +1,4 @@
-const axios = require('axios');
+const https = require('https');
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
@@ -10,21 +10,49 @@ exports.shareOnImgur = async (req, res) => {
     const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = imageBuffer.toString('base64');
 
-    const response = await axios.post('https://api.imgur.com/3/image', {
+    const postData = JSON.stringify({
       image: base64Image,
       type: 'base64',
-      description: description
-    }, {
-      headers: {
-        Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
-      },
+      description: description,
     });
 
-    if (response.data.success) {
-      res.json({ success: true, imgurLink: response.data.data.link });
-    } else {
-      res.status(500).json({ success: false, error: 'Failed to upload image to Imgur' });
-    }
+    const options = {
+      hostname: 'api.imgur.com',
+      path: '/3/image',
+      method: 'POST',
+      headers: {
+        Authorization: `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+        'Content-Type': 'application/json',
+        'Content-Length': postData.length,
+      },
+    };
+
+    const imgurRequest = https.request(options, (imgurResponse) => {
+      let data = '';
+
+      imgurResponse.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      imgurResponse.on('end', () => {
+        const responseJson = JSON.parse(data);
+        if (responseJson.success) {
+          res.json({ success: true, imgurLink: responseJson.data.link });
+        } else {
+          res.status(500).json({ success: false, error: 'Failed to upload image to Imgur' });
+        }
+      });
+    });
+
+    imgurRequest.on('error', (error) => {
+      console.error('Error sharing on Imgur:', error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    });
+
+    // Write the request data
+    imgurRequest.write(postData);
+    imgurRequest.end();
+
   } catch (error) {
     console.error('Error sharing on Imgur:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
