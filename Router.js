@@ -48,26 +48,15 @@ class Router {
             res.end();
         };
 
-        const runMiddleware = async (middleware, req, res) => {
+        const runMiddleware = (middleware, req, res) => {
             return new Promise((resolve, reject) => {
-                if (Array.isArray(middleware)) {
-                    let index = 0;
-                    const next = (err) => {
-                        if (err) {
-                            reject(err);
-                        } else if (index < middleware.length) {
-                            const mw = middleware[index++];
-                            mw(req, res, next);
-                        } else {
-                            resolve();
-                        }
-                    };
-                    next();
-                } else {
+                try {
                     middleware(req, res, (err) => {
                         if (err) reject(err);
                         else resolve();
                     });
+                } catch (err) {
+                    reject(err);
                 }
             });
         };
