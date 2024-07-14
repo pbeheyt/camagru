@@ -10,11 +10,12 @@ const { serveStatic } = require('./middlewares/serveStatic');
 const { sendFile, sendJson } = require('./utils/responseMethods');
 const { connectToDatabase } = require('./database/connect');
 const { initializeDatabase } = require('./database/init');
+require('dotenv').config();
 
 const router = new Router();
 
 const server = http.createServer((req, res) => {
-    console.log(`Incoming request: ${req.method} ${req.url}`);
+    // console.log(`Incoming request: ${req.method} ${req.url}`);
 
     res.locals = {};
 
@@ -38,15 +39,11 @@ router.use(serveStatic);
 
 routes(router);
 
-const PORT = process.env.PORT || 3000;
-
 const startServer = async () => {
   try {
       await connectToDatabase();
       await initializeDatabase();
-      server.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      });
+      server.listen(process.env.PORT);
   } catch (error) {
       console.error('Unable to start the server:', error);
   }

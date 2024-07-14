@@ -1,5 +1,5 @@
 const { Client } = require('pg');
-const config = require('../config/config')[process.env.NODE_ENV || 'development'];
+const config = require('../config/config').development;
 
 const client = new Client({
   user: config.username,
@@ -21,6 +21,7 @@ const connectToDatabase = async () => {
     process.exit(1); // Exit the process with a failure code
   }
 };
+
 module.exports = {
   client,
   connectToDatabase,
