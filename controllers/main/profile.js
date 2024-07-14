@@ -43,6 +43,10 @@ exports.updateUserInfo = async (req, res) => {
       updateValues.push(sanitizedUsername);
     }
 
+    if (updateFields.length === 0) {
+      return res.status(400).json({ error: 'No valid information to update' });
+    }
+
     const setClause = updateFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
     const updateQuery = `UPDATE users SET ${setClause} WHERE id = $${updateFields.length + 1}`;
     await client.query(updateQuery, [...updateValues, req.session.userId]);
