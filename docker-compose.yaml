@@ -7,7 +7,7 @@ networks:
 services:
   app:
     build: .
-    command: npm run dev  # Use nodemon for development
+    command: npm run start  # run dev -> nodemon / run start -> normal
     ports:
       - '3000:3000'
     environment:
@@ -18,7 +18,7 @@ services:
     networks:
       - camagru-network
     volumes:
-      - .:/app  # Mount the current directory into the container
+      - .:/app
 
   db:
     image: postgres:14
