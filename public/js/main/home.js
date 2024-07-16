@@ -254,14 +254,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		if (lastImageContainer) {
 			const lastImageBottom = lastImageContainer.getBoundingClientRect().bottom;
-
+			
 			if (lastImageBottom <= windowHeight + 100) {
 				fetchImages(currentPage + 1);
 			}
 		}
 	}
 
-	window.addEventListener('scroll', handleScroll);
+	window.addEventListener('mousewheel', handleScroll);
 
 	// First check if the user is authenticated, then fetch images
 	checkAuth().then(() => fetchImages(currentPage));
