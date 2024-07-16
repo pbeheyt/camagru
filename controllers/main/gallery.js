@@ -49,13 +49,11 @@ exports.getImages = async (req, res) => {
       return res.json({ success: true, images: [], totalPages: 0, currentPage: page });
     }
 
-    // Fetch related users
-    const userIds = images.map(image => image.userId);
+    // Fetch all users
     const userQuery = `
-      SELECT id, username FROM users
-      WHERE id = ANY($1);
+      SELECT id, username FROM users;
     `;
-    const userResult = await client.query(userQuery, [userIds]);
+    const userResult = await client.query(userQuery);
     const users = userResult.rows;
 
     // Fetch likes for each image
@@ -83,7 +81,7 @@ exports.getImages = async (req, res) => {
       const imageUser = users.find(user => user.id === image.userId);
       const imageLikes = likes.find(like => like.imageId === image.id) || { count: 0 };
       const imageComments = comments.filter(comment => comment.imageId === image.id).map(comment => {
-        const commenter = users.find(user => user.id === comment.userId);
+      const commenter = users.find(user => user.id === comment.userId);
         return {
           id: comment.id,
           text: escapeHtml(comment.text),
