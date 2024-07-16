@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
 			webcamElement.srcObject = stream;
 	  } catch (error) {
-			console.error('Error accessing webcam:', error);
+			alert('Error accessing webcam:', error);
 	  }
 	}
   
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						};
 					});
 				} else {
-					console.error('Error fetching superposable images:', data.error);
+					alert('Error fetching superposable images:', data.error);
 				}
 			})
 			.catch(error => {
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             addThumbnail(image);
           });
         } else {
-          console.error('Error fetching thumbnails:', data.error);
+          alert('Error fetching thumbnails:', data.error);
         }
       })
       .catch(error => {
@@ -210,11 +210,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		  alert('Image deleted successfully');
 		  thumbnailElement.remove();
 		} else {
-		  console.error('Error deleting image:', data.error);
+		  alert('Error deleting image:', data.error);
 		}
 	  })
 	  .catch(error => {
-		console.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	}
   
@@ -245,11 +245,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		  currentImageUrl = data.imageUrl;
 		  previewModal.style.display = 'block';
 		} else {
-		  console.error('Error capturing image:', data.error);
+		  alert('Error capturing image:', data.error);
 		}
 	  })
 	  .catch(error => {
-			sole.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	});
   
@@ -304,11 +304,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			imgurDescriptionInput.value = '';
 		  previewModal.style.display = 'none';
 		} else {
-		  console.error('Error posting image:', data.error);
+		  alert('Error posting image:', data.error);
 		}
 	  })
 	  .catch(error => {
-		console.error('Error:', error);
+			console.error('Error:', error);
 	  });
 	});
   
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			gifNotification.style.display = 'none';
 			gifInProgress = false;
 		} else {
-			console.error('Error creating GIF:', data.error);
+			alert('Error creating GIF:', data.error);
 			gifNotification.style.display = 'none';
 			gifInProgress = false;
 		}
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				window.open(data.imgurLink, '_blank');
 				imgurDescriptionInput.value = '';
 			} else {
-				console.error('Error sharing on imgur:', data.error);
+				alert('Error sharing on imgur:', data.error);
 			}
 		})
 		.catch(error => {

@@ -27,7 +27,7 @@ exports.requestPasswordReset = async (req, res) => {
     
         return res.json({ success: 'Password reset request sent' });
       } catch (error) {
-        console.error('Error requesting password reset:', error);
+        // console.error('Error requesting password reset:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
     };

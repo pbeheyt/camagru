@@ -34,7 +34,7 @@ exports.handleLogin = async (req, res) => {
 
         res.status(200).json({ success: 'Login successful.' });
     } catch (error) {
-        console.error('Error authenticating user:', error);
+        // console.error('Error authenticating user:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };

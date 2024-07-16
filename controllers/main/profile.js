@@ -53,7 +53,7 @@ exports.updateUserInfo = async (req, res) => {
 
     res.status(200).json({ success: 'Information updated successfully' });
   } catch (error) {
-    console.error('Error updating user info:', error);
+    // console.error('Error updating user info:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -89,7 +89,7 @@ exports.updateUserPassword = async (req, res) => {
 
     res.status(200).json({ success: 'Password updated successfully' });
   } catch (error) {
-    console.error('Error updating password:', error);
+    // console.error('Error updating password:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -106,7 +106,7 @@ exports.getUserInfo = async (req, res) => {
 
     res.status(200).json({ success: true, user });
   } catch (error) {
-    console.error('Error fetching user info:', error);
+    // console.error('Error fetching user info:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

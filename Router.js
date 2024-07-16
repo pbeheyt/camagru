@@ -84,7 +84,7 @@ class Router {
                 this.handle404(req, res);
             }
         } catch (err) {
-            console.error('Error during routing:', err);
+            // console.error('Error during routing:', err);
             this.handle500(err, req, res);
         }
     }
@@ -97,7 +97,7 @@ class Router {
     }
 
     handle500(err, req, res) {
-        console.error('Error handling request:', err);
+        // console.error('Error handling request:', err);
         res.status(500).end('Internal Server Error');
         res.end('Internal Server Error');
     }

@@ -106,7 +106,7 @@ exports.getImages = async (req, res) => {
       currentPage: page
     });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 };
@@ -150,7 +150,7 @@ exports.likeImage = async (req, res) => {
 
     res.json({ success: true, likeCount, liked });
   } catch (error) {
-    console.error('Error liking image:', error);
+    // console.error('Error liking image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
@@ -195,7 +195,7 @@ exports.commentImage = async (req, res) => {
 
     res.json({ success: true, comment: { text: escapeHtml(comment.text), username: user.username } });
   } catch (error) {
-    console.error('Error commenting on image:', error);
+    // console.error('Error commenting on image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };

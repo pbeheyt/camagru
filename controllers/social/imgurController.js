@@ -46,7 +46,7 @@ exports.shareOnImgur = async (req, res) => {
     });
 
     imgurRequest.on('error', (error) => {
-      console.error('Error sharing on Imgur:', error);
+      // console.error('Error sharing on Imgur:', error);
       res.status(500).json({ success: false, error: 'Internal Server Error' });
     });
 
@@ -55,7 +55,7 @@ exports.shareOnImgur = async (req, res) => {
     imgurRequest.end();
 
   } catch (error) {
-    console.error('Error sharing on Imgur:', error);
+    // console.error('Error sharing on Imgur:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };

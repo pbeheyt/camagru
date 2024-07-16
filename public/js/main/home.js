@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				.catch(error => {
 					loadingSpinner.style.display = 'none';
 					isLoading = false;
-					console.error('Error fetching images:', error);
+					// console.error('Error fetching images:', error);
 				});
 		}, 1000); // 1000ms delay for loading animation
 	}

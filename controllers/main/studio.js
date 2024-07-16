@@ -41,7 +41,7 @@ exports.captureImage = async (req, res) => {
 					res.json({ success: true, imageUrl: `/uploads/${filename}` });
 			});
 	} catch (error) {
-			console.error('Error capturing image:', error);
+			// console.error('Error capturing image:', error);
 			res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
 };
@@ -92,7 +92,7 @@ exports.uploadImage = (req, res) => {
 							res.json({ success: true, imageUrl: `/uploads/${filename}` });
 					});
 			} catch (error) {
-					console.error('Error processing uploaded image:', error);
+					// console.error('Error processing uploaded image:', error);
 					res.status(500).json({ success: false, error: 'Internal Server Error' });
 			}
 	});
@@ -113,7 +113,7 @@ exports.postImage = async (req, res) => {
 
 			res.json({ success: true, image });
 	} catch (error) {
-			console.error('Error posting image:', error);
+			// console.error('Error posting image:', error);
 			res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
 };
@@ -141,13 +141,13 @@ exports.deleteImage = async (req, res) => {
           await client.query('DELETE FROM images WHERE id = $1', [image.id]);
           return res.json({ success: true, message: 'Image record and associated data deleted, but file was not found' });
         } else {
-          console.error('Error accessing file:', err);
+          // console.error('Error accessing file:', err);
           return res.status(500).json({ success: false, error: 'Error accessing image file' });
         }
       } else {
         fs.unlink(filePath, async (err) => {
           if (err) {
-            console.error('Error deleting image file:', err);
+            // console.error('Error deleting image file:', err);
             return res.status(500).json({ success: false, error: 'Error deleting image file' });
           }
 
@@ -160,7 +160,7 @@ exports.deleteImage = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error deleting image:', error);
+    // console.error('Error deleting image:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
@@ -209,7 +209,7 @@ exports.createAnimatedGIF = async (req, res) => {
 		res.json({ success: true, imageUrl: `/uploads/${path.basename(filePath)}` });
 	  });
 	} catch (error) {
-	  console.error('Error creating animated GIF:', error);
+	  // console.error('Error creating animated GIF:', error);
 	  res.status(500).json({ success: false, error: 'Internal Server Error' });
 	}
 };

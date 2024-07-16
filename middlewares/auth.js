@@ -25,7 +25,7 @@ exports.validateAccount = async (req, res, next) => {
 
       next();
   } catch (error) {
-      console.error('Error confirming user:', error);
+      // console.error('Error confirming user:', error);
       return res.status(500).redirect('/login?error=' + encodeURIComponent('Internal Server Error'));
   }
 };
@@ -48,7 +48,7 @@ exports.validateResetToken = async (req, res, next) => {
 
       next();
   } catch (error) {
-      console.error('Error validating reset token:', error);
+      // console.error('Error validating reset token:', error);
       return res.status(500).redirect('/login?error=' + encodeURIComponent('Internal Server Error'));
   }
 };

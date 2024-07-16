@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		  }
 		})
 		.catch(function(error) {
-		  console.error('Error fetching the content:', error);
+		  // console.error('Error fetching the content:', error);
 		});
 	}
   

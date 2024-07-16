@@ -60,7 +60,7 @@ exports.handleRegister = async (req, res) => {
 
       return res.status(201).json({ success: 'Your account has been successfully registered! Please check your email to confirm your account and complete the registration process.' });
     } catch (error) {
-      console.error('Error creating user:', error);
+      // console.error('Error creating user:', error);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 };
