@@ -1,7 +1,8 @@
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
+const loadEnv = require('../../utils/loadEnv');
+loadEnv(path.join(__dirname, '..', '..', '.env'));
 
 exports.shareOnImgur = async (req, res) => {
   try {

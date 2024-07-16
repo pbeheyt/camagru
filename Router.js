@@ -43,11 +43,6 @@ class Router {
         req.pathname = parsedUrl.pathname.replace(/\/+$/, '');
         req.query = parsedUrl.query;
 
-        res.redirect = (location) => {
-            res.writeHead(302, { 'Location': location });
-            res.end();
-        };
-
         const runMiddleware = (middleware, req, res) => {
             return new Promise((resolve, reject) => {
                 try {
@@ -95,21 +90,15 @@ class Router {
     }
 
     handle404(req, res) {
-        res.statusCode = 404;
+        res.status(404);
         res.setHeader('Content-Type', 'text/html');
         const filePath = path.join(__dirname, 'views', 'main', '404.html');
-        fs.readFile(filePath, (err, data) => {
-            if (err) {
-                res.end('404 Not Found');
-            } else {
-                res.end(data);
-            }
-        });
+        res.sendFile(filePath);
     }
 
     handle500(err, req, res) {
         console.error('Error handling request:', err);
-        res.statusCode = 500;
+        res.status(500).end('Internal Server Error');
         res.end('Internal Server Error');
     }
 }

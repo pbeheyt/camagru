@@ -16,7 +16,20 @@ function sendJson(res, data) {
     res.end(JSON.stringify(data));
 }
 
+function status(res, statusCode) {
+    res.statusCode = statusCode;
+    return res;
+}
+
+function redirect(res, location) {
+    res.writeHead(302, { 'Location': location });
+    res.end();
+}
+
 module.exports = {
     sendFile,
-    sendJson
+    sendJson,
+    status,
+    redirect
 };
+

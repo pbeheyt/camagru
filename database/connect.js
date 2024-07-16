@@ -1,12 +1,14 @@
 const { Client } = require('pg');
-const config = require('../config/config').development;
+const path = require('path');
+const loadEnv = require('../utils/loadEnv');
+loadEnv(path.join(__dirname, '..', '.env'));
 
 const client = new Client({
-  user: config.username,
-  host: config.host,
-  database: config.database,
-  password: config.password,
-  port: config.port,
+  user: process.env.DB_USERNAME,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
 });
 
 const connectToDatabase = async () => {

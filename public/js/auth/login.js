@@ -36,17 +36,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.error('Error:', error);
 	  });
 	});
-	  
+	
+	//Parse error/sucess message in the query string in case of redirection to login page with message
 	const params = new URLSearchParams(window.location.search);
 	const error = params.get('error');
 	const success = params.get('success');
   
 	if (error) {
 	  errorMessage.textContent = error;
+		successMessage.textContent = '';
+		errorMessage.style.display = 'block';
+		successMessage.style.display = 'none';
 	}
   
 	if (success) {
 	  successMessage.textContent = success;
+		errorMessage.textContent = '';
+		successMessage.style.display = 'block';
+		errorMessage.style.display = 'none';
 	}
 });
   
