@@ -23,8 +23,6 @@ const server = http.createServer((req, res) => {
 
     res.locals = {};
 
-    res.locals = {};
-
     res.sendFile = (filePath) => sendFile(res, filePath);
     res.json = (data) => sendJson(res, data);
     res.status = (statusCode) => status(res, statusCode);
